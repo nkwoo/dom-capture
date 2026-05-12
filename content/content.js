@@ -73,6 +73,68 @@ function onKeyDown(e) {
   }
 }
 
+function resolveByCSS(selector) {
+  try {
+    return document.querySelector(selector) || null;
+  } catch (_) {
+    return null;
+  }
+}
+
+function resolveByXPath(xpath) {
+  try {
+    const result = document.evaluate(
+      xpath, document, null,
+      XPathResult.FIRST_ORDERED_NODE_TYPE, null
+    );
+    return result.singleNodeValue || null;
+  } catch (_) {
+    return null;
+  }
+}
+
+function getElementRect(el) {
+  el.scrollIntoView({ behavior: 'instant', block: 'center' });
+  const rect = el.getBoundingClientRect();
+  return {
+    left: rect.left,
+    top: rect.top,
+    width: rect.width,
+    height: rect.height,
+    scrollX: window.scrollX,
+    scrollY: window.scrollY,
+  };
+}
+
+function getPageDimensions() {
+  return {
+    totalHeight: document.documentElement.scrollHeight,
+    totalWidth: document.documentElement.scrollWidth,
+    viewportHeight: window.innerHeight,
+    viewportWidth: window.innerWidth,
+  };
+}
+
+let hiddenFixedElements = [];
+
+function hideFixedElements() {
+  hiddenFixedElements = [];
+  document.querySelectorAll('*').forEach(el => {
+    const pos = window.getComputedStyle(el).position;
+    if (pos === 'fixed' || pos === 'sticky') {
+      hiddenFixedElements.push({ el, visibility: el.style.visibility });
+      el.style.visibility = 'hidden';
+    }
+  });
+}
+
+function restoreFixedElements() {
+  hiddenFixedElements.forEach(({ el, visibility }) => {
+    el.style.visibility = visibility;
+  });
+  hiddenFixedElements = [];
+}
+
 function activatePicker() {
   pickerActive = true;
   createOverlay();
@@ -96,9 +158,37 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
   if (msg.action === 'ACTIVATE_PICKER') {
     activatePicker();
     sendResponse({ ok: true });
+
   } else if (msg.action === 'DEACTIVATE_PICKER') {
     deactivatePicker();
     sendResponse({ ok: true });
+
+  } else if (msg.action === 'FIND_ELEMENT') {
+    const el = msg.selectorType === 'xpath'
+      ? resolveByXPath(msg.selector)
+      : resolveByCSS(msg.selector);
+    if (!el) {
+      sendResponse({ error: '요소를 찾을 수 없습니다.' });
+    } else {
+      sendResponse({ rect: getElementRect(el) });
+    }
+
+  } else if (msg.action === 'GET_PAGE_DIMENSIONS') {
+    sendResponse(getPageDimensions());
+
+  } else if (msg.action === 'SCROLL_TO') {
+    window.scrollTo(0, msg.y);
+    setTimeout(() => sendResponse({ ok: true }), 150);
+    return true;
+
+  } else if (msg.action === 'HIDE_FIXED') {
+    hideFixedElements();
+    sendResponse({ ok: true });
+
+  } else if (msg.action === 'RESTORE_FIXED') {
+    restoreFixedElements();
+    sendResponse({ ok: true });
   }
+
   return true;
 });
