@@ -75,6 +75,10 @@ function isUnsupportedTab(tab) {
   );
 }
 
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 async function captureViewport() {
   return captureTab();
 }
@@ -93,11 +97,21 @@ async function captureFullPage(tabId) {
   );
   const ctx = canvas.getContext('2d');
 
+  // Chrome limits captureVisibleTab to 2 calls/sec. Enforce ≥ 600ms between calls.
+  const CAPTURE_INTERVAL = 600;
+  let lastCaptureTime = 0;
+
   let y = 0;
   while (y < totalHeight) {
     await sendToTab(tabId, { action: 'SCROLL_TO', y });
 
+    const elapsed = Date.now() - lastCaptureTime;
+    if (elapsed < CAPTURE_INTERVAL) {
+      await sleep(CAPTURE_INTERVAL - elapsed);
+    }
+
     const dataUrl = await captureTab();
+    lastCaptureTime = Date.now();
     const imgBlob = await (await fetch(dataUrl)).blob();
     const img = await createImageBitmap(imgBlob);
 
