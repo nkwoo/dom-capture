@@ -1,3 +1,4 @@
+importScripts('lib/jspdf.min.js');
 // background/service-worker.js
 
 function captureTab() {
@@ -125,3 +126,104 @@ async function captureFullPage(tabId) {
   const blob = await canvas.convertToBlob({ type: 'image/png' });
   return blobToDataUrl(blob);
 }
+
+function downloadDataUrl(dataUrl, filename) {
+  return new Promise((resolve, reject) => {
+    chrome.downloads.download({ url: dataUrl, filename, saveAs: false }, (downloadId) => {
+      if (chrome.runtime.lastError) {
+        reject(new Error(chrome.runtime.lastError.message));
+      } else {
+        resolve(downloadId);
+      }
+    });
+  });
+}
+
+async function dataUrlToPdfDataUrl(dataUrl) {
+  const imgBlob = await (await fetch(dataUrl)).blob();
+  const img = await createImageBitmap(imgBlob);
+  const { width, height } = img;
+  const orientation = width > height ? 'l' : 'p';
+  const { jsPDF } = jspdf;
+  const pdf = new jsPDF({ orientation, unit: 'px', format: [width, height] });
+  pdf.addImage(dataUrl, 'PNG', 0, 0, width, height);
+  return pdf.output('datauristring');
+}
+
+chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+  (async () => {
+    try {
+      const CAPTURE_ACTIONS = ['ACTIVATE_PICKER', 'CAPTURE_ELEMENT', 'CAPTURE_VIEWPORT', 'CAPTURE_FULL_PAGE'];
+
+      if (CAPTURE_ACTIONS.includes(msg.action)) {
+        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        if (isUnsupportedTab(tab)) {
+          sendResponse({ error: '이 페이지는 캡처할 수 없습니다.' });
+          return;
+        }
+      }
+
+      if (msg.action === 'ELEMENT_SELECTED') {
+        // content script → background (피커 클릭 후)
+        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        const croppedUrl = await captureElement(tab.id, msg.rect);
+        await chrome.storage.session.set({
+          captureResult: { dataUrl: croppedUrl, timestamp: Date.now() }
+        });
+        sendResponse({ ok: true });
+
+      } else if (msg.action === 'ACTIVATE_PICKER') {
+        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        await sendToTab(tab.id, { action: 'ACTIVATE_PICKER' });
+        sendResponse({ ok: true });
+
+      } else if (msg.action === 'DEACTIVATE_PICKER') {
+        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        await sendToTab(tab.id, { action: 'DEACTIVATE_PICKER' });
+        sendResponse({ ok: true });
+
+      } else if (msg.action === 'CAPTURE_ELEMENT') {
+        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        const res = await sendToTab(tab.id, {
+          action: 'FIND_ELEMENT',
+          selector: msg.selector,
+          selectorType: msg.selectorType,
+        });
+        if (res && res.error) {
+          sendResponse({ error: res.error });
+          return;
+        }
+        const croppedUrl = await captureElement(tab.id, res.rect);
+        sendResponse({ dataUrl: croppedUrl });
+
+      } else if (msg.action === 'CAPTURE_VIEWPORT') {
+        const dataUrl = await captureViewport();
+        sendResponse({ dataUrl });
+
+      } else if (msg.action === 'CAPTURE_FULL_PAGE') {
+        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        const dataUrl = await captureFullPage(tab.id);
+        sendResponse({ dataUrl });
+
+      } else if (msg.action === 'DOWNLOAD') {
+        const ext = msg.format === 'pdf' ? 'pdf' : 'png';
+        const filename = `dom-capture-${Date.now()}.${ext}`;
+        let dataUrl = msg.dataUrl;
+        if (msg.format === 'pdf') {
+          dataUrl = await dataUrlToPdfDataUrl(msg.dataUrl);
+        }
+        await downloadDataUrl(dataUrl, filename);
+        sendResponse({ ok: true });
+
+      } else if (msg.action === 'GET_RESULT') {
+        const data = await chrome.storage.session.get('captureResult');
+        await chrome.storage.session.remove('captureResult');
+        sendResponse(data.captureResult || null);
+      }
+
+    } catch (err) {
+      sendResponse({ error: err.message });
+    }
+  })();
+  return true;
+});
