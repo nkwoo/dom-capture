@@ -1,4 +1,4 @@
-importScripts('lib/jspdf.min.js');
+importScripts('../lib/jspdf.min.js');
 // background/service-worker.js
 
 function captureTab() {
@@ -103,7 +103,7 @@ async function captureFullPage(tabId) {
     const remaining = totalHeight - y;
     const sliceHeight = Math.min(viewportHeight, remaining);
     // 마지막 조각은 뷰포트 하단부터 잘라야 하므로 srcY 조정
-    const srcY = remaining < viewportHeight
+    const srcY = (y > 0 && remaining < viewportHeight)
       ? Math.round((viewportHeight - remaining) * dpr)
       : 0;
 
@@ -165,8 +165,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 
       if (msg.action === 'ELEMENT_SELECTED') {
         // content script → background (피커 클릭 후)
-        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-        const croppedUrl = await captureElement(tab.id, msg.rect);
+        const croppedUrl = await captureElement(sender.tab.id, msg.rect);
         await chrome.storage.session.set({
           captureResult: { dataUrl: croppedUrl, timestamp: Date.now() }
         });
