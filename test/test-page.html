@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>DOM Capture Test Page</title>
+  <style>
+    body { font-family: sans-serif; margin: 0; }
+    .fixed-header {
+      position: fixed; top: 0; left: 0; right: 0;
+      background: #2563eb; color: #fff;
+      padding: 10px 20px; z-index: 100;
+      font-weight: bold;
+    }
+    .content { padding: 70px 20px 20px; }
+    .card {
+      padding: 20px; margin-bottom: 20px;
+      border: 1px solid #e5e7eb; border-radius: 8px;
+      background: #f9fafb;
+    }
+    .tall { height: 600px; background: linear-gradient(to bottom, #dbeafe, #ede9fe);
+            margin-bottom: 20px; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            color: #6b7280; }
+  </style>
+</head>
+<body>
+  <div class="fixed-header" id="fixed-header">Fixed Header — 전체 페이지 캡처 시 중복되면 안 됩니다</div>
+  <div class="content">
+    <div class="card" id="target-card">
+      <h2>테스트 카드 #target-card</h2>
+      <p>CSS Selector: <code>#target-card</code></p>
+      <p>XPath: <code>//div[@id='target-card']</code></p>
+      <p>이 카드만 캡처되어야 합니다.</p>
+    </div>
+    <div class="tall">스크롤 구간 1 (600px)</div>
+    <div class="card" id="card-2">두 번째 카드 (스크롤 중간)</div>
+    <div class="tall">스크롤 구간 2 (600px)</div>
+    <div class="card" id="card-3">세 번째 카드 (페이지 최하단)</div>
+  </div>
+</body>
+</html>
