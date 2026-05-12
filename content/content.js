@@ -108,24 +108,36 @@ function getElementRect(el) {
 
 function getPageDimensions() {
   return {
-    totalHeight: document.documentElement.scrollHeight,
-    totalWidth: document.documentElement.scrollWidth,
+    totalHeight: Math.max(
+      document.documentElement.scrollHeight,
+      document.body ? document.body.scrollHeight : 0
+    ),
+    totalWidth: Math.max(
+      document.documentElement.scrollWidth,
+      document.body ? document.body.scrollWidth : 0
+    ),
     viewportHeight: window.innerHeight,
     viewportWidth: window.innerWidth,
   };
 }
 
-let savedScrollbarOverflow = null;
+let scrollbarStyleEl = null;
 
 function hideScrollbar() {
-  savedScrollbarOverflow = document.documentElement.style.overflowY;
-  document.documentElement.style.overflowY = 'hidden';
+  if (scrollbarStyleEl) return;
+  scrollbarStyleEl = document.createElement('style');
+  scrollbarStyleEl.id = 'dom-capture-scrollbar-hide';
+  // overflow 변경 없이 스크롤바만 숨김 — overflow:hidden은 scrollHeight를 망가뜨림
+  scrollbarStyleEl.textContent =
+    '::-webkit-scrollbar{display:none!important}' +
+    '*{scrollbar-width:none!important}';
+  document.head.appendChild(scrollbarStyleEl);
 }
 
 function restoreScrollbar() {
-  if (savedScrollbarOverflow !== null) {
-    document.documentElement.style.overflowY = savedScrollbarOverflow;
-    savedScrollbarOverflow = null;
+  if (scrollbarStyleEl) {
+    scrollbarStyleEl.remove();
+    scrollbarStyleEl = null;
   }
 }
 

@@ -86,10 +86,8 @@ async function captureViewport() {
 async function captureFullPage(tabId) {
   const origin = await sendToTab(tabId, { action: 'GET_SCROLL_POSITION' });
 
-  // 스크롤바를 먼저 숨긴 뒤 치수 측정 — Windows 클래식 스크롤바는 ~15px 폭을 차지하므로
-  // 숨기기 전에 측정하면 텍스트 리플로우 후 scrollHeight가 달라져 마지막 슬라이스가 밀림
-  await sendToTab(tabId, { action: 'HIDE_SCROLLBAR' });
   const dims = await sendToTab(tabId, { action: 'GET_PAGE_DIMENSIONS' });
+  await sendToTab(tabId, { action: 'HIDE_SCROLLBAR' });
   const { totalHeight, viewportHeight, viewportWidth } = dims;
   const dpr = await getDevicePixelRatio(tabId);
 
