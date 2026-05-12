@@ -84,6 +84,7 @@ async function captureViewport() {
 }
 
 async function captureFullPage(tabId) {
+  const origin = await sendToTab(tabId, { action: 'GET_SCROLL_POSITION' });
   const dims = await sendToTab(tabId, { action: 'GET_PAGE_DIMENSIONS' });
   const { totalHeight, viewportHeight, viewportWidth } = dims;
   const dpr = await getDevicePixelRatio(tabId);
@@ -137,7 +138,7 @@ async function captureFullPage(tabId) {
 
   await sendToTab(tabId, { action: 'RESTORE_SCROLLBAR' });
   await sendToTab(tabId, { action: 'RESTORE_FIXED' });
-  await sendToTab(tabId, { action: 'SCROLL_TO', y: 0 });
+  await sendToTab(tabId, { action: 'SCROLL_TO', y: origin.y });
 
   const blob = await canvas.convertToBlob({ type: 'image/png' });
   return blobToDataUrl(blob);

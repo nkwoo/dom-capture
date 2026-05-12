@@ -193,9 +193,12 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
     sendResponse(getPageDimensions());
 
   } else if (msg.action === 'SCROLL_TO') {
-    window.scrollTo(0, msg.y);
+    window.scrollTo({ top: msg.y, behavior: 'instant' });
     setTimeout(() => sendResponse({ ok: true }), 200);
     return true;
+
+  } else if (msg.action === 'GET_SCROLL_POSITION') {
+    sendResponse({ x: window.scrollX, y: window.scrollY });
 
   } else if (msg.action === 'HIDE_FIXED') {
     hideFixedElements();
