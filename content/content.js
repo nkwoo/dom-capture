@@ -115,6 +115,20 @@ function getPageDimensions() {
   };
 }
 
+let savedScrollbarOverflow = null;
+
+function hideScrollbar() {
+  savedScrollbarOverflow = document.documentElement.style.overflowY;
+  document.documentElement.style.overflowY = 'hidden';
+}
+
+function restoreScrollbar() {
+  if (savedScrollbarOverflow !== null) {
+    document.documentElement.style.overflowY = savedScrollbarOverflow;
+    savedScrollbarOverflow = null;
+  }
+}
+
 let hiddenFixedElements = [];
 
 function hideFixedElements() {
@@ -190,6 +204,15 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
   } else if (msg.action === 'RESTORE_FIXED') {
     restoreFixedElements();
     sendResponse({ ok: true });
+
+  } else if (msg.action === 'HIDE_SCROLLBAR') {
+    hideScrollbar();
+    sendResponse({ ok: true });
+
+  } else if (msg.action === 'RESTORE_SCROLLBAR') {
+    restoreScrollbar();
+    sendResponse({ ok: true });
+
   } else {
     sendResponse({ error: `Unknown action: ${msg.action}` });
   }

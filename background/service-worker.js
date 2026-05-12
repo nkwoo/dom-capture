@@ -85,6 +85,7 @@ async function captureFullPage(tabId) {
   const dpr = await getDevicePixelRatio(tabId);
 
   await sendToTab(tabId, { action: 'HIDE_FIXED' });
+  await sendToTab(tabId, { action: 'HIDE_SCROLLBAR' });
 
   const canvas = new OffscreenCanvas(
     Math.round(viewportWidth * dpr),
@@ -120,6 +121,7 @@ async function captureFullPage(tabId) {
     y += sliceHeight;
   }
 
+  await sendToTab(tabId, { action: 'RESTORE_SCROLLBAR' });
   await sendToTab(tabId, { action: 'RESTORE_FIXED' });
   await sendToTab(tabId, { action: 'SCROLL_TO', y: 0 });
 
