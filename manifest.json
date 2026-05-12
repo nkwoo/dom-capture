@@ -3,7 +3,7 @@
   "name": "DOM Capture",
   "version": "1.0.0",
   "description": "Capture DOM elements or full pages as PNG or PDF",
-  "permissions": ["activeTab", "tabs", "downloads", "clipboardWrite", "scripting", "storage"],
+  "permissions": ["activeTab", "tabs", "downloads", "clipboardWrite", "scripting", "storage", "sidePanel"],
   "host_permissions": ["<all_urls>"],
   "background": {
     "service_worker": "background/service-worker.js"
@@ -24,6 +24,9 @@
       "run_at": "document_idle"
     }
   ],
+  "side_panel": {
+    "default_path": "popup/popup.html"
+  },
   "web_accessible_resources": [
     {
       "resources": ["lib/jspdf.min.js"],

@@ -127,6 +127,32 @@ async function captureFullPage(tabId) {
   return blobToDataUrl(blob);
 }
 
+async function reopenUI(tabId) {
+  // 방법 1: chrome.action.openPopup() — Chrome 127+
+  if (typeof chrome.action.openPopup === 'function') {
+    try {
+      await chrome.action.openPopup();
+      return;
+    } catch (_) {
+      // 미지원 또는 실패, 다음 방법 시도
+    }
+  }
+
+  // 방법 3: chrome.sidePanel.open() — Chrome 114+
+  if (chrome.sidePanel && typeof chrome.sidePanel.open === 'function') {
+    try {
+      await chrome.sidePanel.open({ tabId });
+      return;
+    } catch (_) {
+      // 미지원 또는 실패, 다음 방법 시도
+    }
+  }
+
+  // 방법 2: 배지 표시 — 모든 버전
+  await chrome.action.setBadgeText({ text: '✓' });
+  await chrome.action.setBadgeBackgroundColor({ color: '#16a34a' });
+}
+
 function downloadDataUrl(dataUrl, filename) {
   return new Promise((resolve, reject) => {
     chrome.downloads.download({ url: dataUrl, filename, saveAs: false }, (downloadId) => {
@@ -169,6 +195,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
         await chrome.storage.session.set({
           captureResult: { dataUrl: croppedUrl, timestamp: Date.now() }
         });
+        await reopenUI(sender.tab.id);
         sendResponse({ ok: true });
 
       } else if (msg.action === 'ACTIVATE_PICKER') {

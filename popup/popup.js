@@ -162,11 +162,12 @@ btnClipboard.addEventListener('click', async () => {
   }
 });
 
-// 팝업 열릴 때: 피커로 선택된 결과가 있으면 표시
+// 팝업 열릴 때: 피커로 선택된 결과가 있으면 표시, 배지 초기화
 (async () => {
   const result = await send({ action: 'GET_RESULT' });
   if (result && result.dataUrl) {
     setPreview(result.dataUrl);
     showStatus('요소 캡처 완료! 다운로드 또는 복사하세요.', 'success');
   }
+  chrome.action.setBadgeText({ text: '' });
 })();
