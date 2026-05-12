@@ -85,12 +85,13 @@ async function captureViewport() {
 
 async function captureFullPage(tabId) {
   const origin = await sendToTab(tabId, { action: 'GET_SCROLL_POSITION' });
+
+  // 스크롤바를 먼저 숨긴 뒤 치수 측정 — Windows 클래식 스크롤바는 ~15px 폭을 차지하므로
+  // 숨기기 전에 측정하면 텍스트 리플로우 후 scrollHeight가 달라져 마지막 슬라이스가 밀림
+  await sendToTab(tabId, { action: 'HIDE_SCROLLBAR' });
   const dims = await sendToTab(tabId, { action: 'GET_PAGE_DIMENSIONS' });
   const { totalHeight, viewportHeight, viewportWidth } = dims;
   const dpr = await getDevicePixelRatio(tabId);
-
-  await sendToTab(tabId, { action: 'HIDE_FIXED' });
-  await sendToTab(tabId, { action: 'HIDE_SCROLLBAR' });
 
   const canvas = new OffscreenCanvas(
     Math.round(viewportWidth * dpr),
@@ -101,6 +102,7 @@ async function captureFullPage(tabId) {
   // Chrome limits captureVisibleTab to 2 calls/sec. Enforce ≥ 600ms between calls.
   const CAPTURE_INTERVAL = 600;
   let lastCaptureTime = 0;
+  let fixedHidden = false;
 
   let y = 0;
   while (y < totalHeight) {
@@ -113,6 +115,14 @@ async function captureFullPage(tabId) {
 
     const dataUrl = await captureTab();
     lastCaptureTime = Date.now();
+
+    // 첫 번째 슬라이스(y=0)는 fixed 요소(헤더)가 보이는 상태로 캡처하여 최상단에 한 번 표시.
+    // 캡처 직후 숨겨서 이후 슬라이스에서는 반복되지 않도록 함.
+    if (!fixedHidden) {
+      await sendToTab(tabId, { action: 'HIDE_FIXED' });
+      fixedHidden = true;
+    }
+
     const imgBlob = await (await fetch(dataUrl)).blob();
     const img = await createImageBitmap(imgBlob);
 
@@ -136,8 +146,8 @@ async function captureFullPage(tabId) {
     y += sliceHeight;
   }
 
-  await sendToTab(tabId, { action: 'RESTORE_SCROLLBAR' });
   await sendToTab(tabId, { action: 'RESTORE_FIXED' });
+  await sendToTab(tabId, { action: 'RESTORE_SCROLLBAR' });
   await sendToTab(tabId, { action: 'SCROLL_TO', y: origin.y });
 
   const blob = await canvas.convertToBlob({ type: 'image/png' });
