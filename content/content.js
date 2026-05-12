@@ -6,6 +6,7 @@ let label = null;
 let currentTarget = null;
 
 function createOverlay() {
+  if (overlay) removeOverlay();
   overlay = document.createElement('div');
   overlay.id = 'dom-capture-overlay';
   document.body.appendChild(overlay);
@@ -47,7 +48,7 @@ function onMouseMove(e) {
 }
 
 function onMouseClick(e) {
-  if (!pickerActive || !currentTarget) return;
+  if (!pickerActive || !currentTarget || !document.contains(currentTarget)) return;
   e.preventDefault();
   e.stopPropagation();
 
@@ -67,6 +68,7 @@ function onMouseClick(e) {
 
 function onKeyDown(e) {
   if (e.key === 'Escape' && pickerActive) {
+    e.stopPropagation();
     deactivatePicker();
   }
 }
