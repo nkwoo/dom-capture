@@ -130,7 +130,9 @@ function hideFixedElements() {
 
 function restoreFixedElements() {
   hiddenFixedElements.forEach(({ el, visibility }) => {
-    el.style.visibility = visibility;
+    if (document.contains(el)) {
+      el.style.visibility = visibility;
+    }
   });
   hiddenFixedElements = [];
 }
@@ -178,7 +180,7 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
 
   } else if (msg.action === 'SCROLL_TO') {
     window.scrollTo(0, msg.y);
-    setTimeout(() => sendResponse({ ok: true }), 150);
+    setTimeout(() => sendResponse({ ok: true }), 200);
     return true;
 
   } else if (msg.action === 'HIDE_FIXED') {
@@ -188,6 +190,8 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
   } else if (msg.action === 'RESTORE_FIXED') {
     restoreFixedElements();
     sendResponse({ ok: true });
+  } else {
+    sendResponse({ error: `Unknown action: ${msg.action}` });
   }
 
   return true;
