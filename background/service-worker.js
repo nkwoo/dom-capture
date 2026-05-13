@@ -32,11 +32,36 @@ async function getDevicePixelRatio(tabId) {
 async function captureElement(tabId, absRect) {
   const origin = await sendToTab(tabId, { action: 'GET_SCROLL_POSITION' });
   const dpr = await getDevicePixelRatio(tabId);
-
   const { absLeft, absTop, width, height } = absRect;
 
   const dims = await sendToTab(tabId, { action: 'GET_PAGE_DIMENSIONS' });
   const { viewportHeight, viewportWidth, totalHeight, totalWidth } = dims;
+
+  // 요소가 현재 뷰포트에 완전히 보이면 즉시 캡처 (스크롤 불필요)
+  const isFullyVisible =
+    absLeft >= origin.x &&
+    absTop >= origin.y &&
+    absLeft + width <= origin.x + viewportWidth &&
+    absTop + height <= origin.y + viewportHeight;
+
+  if (isFullyVisible) {
+    const dataUrl = await captureTab();
+    const imgBlob = await (await fetch(dataUrl)).blob();
+    const img = await createImageBitmap(imgBlob);
+    const canvas = new OffscreenCanvas(Math.round(width * dpr), Math.round(height * dpr));
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(
+      img,
+      Math.round((absLeft - origin.x) * dpr), Math.round((absTop - origin.y) * dpr),
+      Math.round(width * dpr), Math.round(height * dpr),
+      0, 0,
+      Math.round(width * dpr), Math.round(height * dpr)
+    );
+    const outBlob = await canvas.convertToBlob({ type: 'image/png' });
+    return blobToDataUrl(outBlob);
+  }
+
+  // 뷰포트 밖이거나 뷰포트보다 큰 요소: scroll-and-stitch
   const maxScrollY = Math.max(0, totalHeight - viewportHeight);
   const maxScrollX = Math.max(0, totalWidth - viewportWidth);
   const actualScrollX = Math.min(Math.max(0, absLeft), maxScrollX);
@@ -53,42 +78,44 @@ async function captureElement(tabId, absRect) {
   const CAPTURE_INTERVAL = 600;
   let lastCaptureTime = 0;
 
-  let sliceY = 0;
-  while (sliceY < height) {
-    const targetScrollY = absTop + sliceY;
-    const actualScrollY = Math.min(targetScrollY, maxScrollY);
+  try {
+    let sliceY = 0;
+    while (sliceY < height) {
+      const targetScrollY = absTop + sliceY;
+      const actualScrollY = Math.min(targetScrollY, maxScrollY);
 
-    await sendToTab(tabId, { action: 'SCROLL_TO', y: actualScrollY, x: actualScrollX });
+      await sendToTab(tabId, { action: 'SCROLL_TO', y: actualScrollY, x: actualScrollX });
 
-    const elapsed = Date.now() - lastCaptureTime;
-    if (elapsed < CAPTURE_INTERVAL) await sleep(CAPTURE_INTERVAL - elapsed);
+      const elapsed = Date.now() - lastCaptureTime;
+      if (elapsed < CAPTURE_INTERVAL) await sleep(CAPTURE_INTERVAL - elapsed);
 
-    const dataUrl = await captureTab();
-    lastCaptureTime = Date.now();
+      const dataUrl = await captureTab();
+      lastCaptureTime = Date.now();
 
-    const imgBlob = await (await fetch(dataUrl)).blob();
-    const img = await createImageBitmap(imgBlob);
+      const imgBlob = await (await fetch(dataUrl)).blob();
+      const img = await createImageBitmap(imgBlob);
 
-    // 스크롤 클램핑 시(페이지 하단 요소) 요소가 뷰포트 상단이 아닌 아래쪽에서 시작
-    const srcY = targetScrollY - actualScrollY;
-    const remaining = height - sliceY;
-    const sliceHeight = Math.min(viewportHeight - srcY, remaining);
-    if (sliceHeight <= 0) break;
+      // 스크롤 클램핑 시(페이지 하단 요소) 요소가 뷰포트 상단이 아닌 아래쪽에서 시작
+      const srcY = targetScrollY - actualScrollY;
+      const remaining = height - sliceY;
+      const sliceHeight = Math.min(viewportHeight - srcY, remaining);
+      if (sliceHeight <= 0) break;
 
-    ctx.drawImage(
-      img,
-      Math.round((absLeft - actualScrollX) * dpr), Math.round(srcY * dpr),
-      Math.round(width * dpr), Math.round(sliceHeight * dpr),
-      0, Math.round(sliceY * dpr),
-      Math.round(width * dpr), Math.round(sliceHeight * dpr)
-    );
+      ctx.drawImage(
+        img,
+        Math.round((absLeft - actualScrollX) * dpr), Math.round(srcY * dpr),
+        Math.round(width * dpr), Math.round(sliceHeight * dpr),
+        0, Math.round(sliceY * dpr),
+        Math.round(width * dpr), Math.round(sliceHeight * dpr)
+      );
 
-    sliceY += sliceHeight;
+      sliceY += sliceHeight;
+    }
+  } finally {
+    await sendToTab(tabId, { action: 'RESTORE_FIXED' });
+    await sendToTab(tabId, { action: 'RESTORE_SCROLLBAR' });
+    await sendToTab(tabId, { action: 'SCROLL_TO', y: origin.y, x: origin.x });
   }
-
-  await sendToTab(tabId, { action: 'RESTORE_FIXED' });
-  await sendToTab(tabId, { action: 'RESTORE_SCROLLBAR' });
-  await sendToTab(tabId, { action: 'SCROLL_TO', y: origin.y, x: origin.x });
 
   const blob = await canvas.convertToBlob({ type: 'image/png' });
   return blobToDataUrl(blob);
