@@ -73,6 +73,11 @@ function onKeyDown(e) {
   }
 }
 
+function onHoverEvent(e) {
+  if (!pickerActive) return;
+  e.stopPropagation();
+}
+
 function resolveByCSS(selector) {
   try {
     return document.querySelector(selector) || null;
@@ -170,6 +175,8 @@ function activatePicker() {
   document.addEventListener('mousemove', onMouseMove, true);
   document.addEventListener('click', onMouseClick, true);
   document.addEventListener('keydown', onKeyDown, true);
+  document.addEventListener('mouseover', onHoverEvent, true);
+  document.addEventListener('mouseout', onHoverEvent, true);
   document.body.style.cursor = 'crosshair';
 }
 
@@ -179,6 +186,8 @@ function deactivatePicker() {
   document.removeEventListener('mousemove', onMouseMove, true);
   document.removeEventListener('click', onMouseClick, true);
   document.removeEventListener('keydown', onKeyDown, true);
+  document.removeEventListener('mouseover', onHoverEvent, true);
+  document.removeEventListener('mouseout', onHoverEvent, true);
   document.body.style.cursor = '';
   currentTarget = null;
 }
