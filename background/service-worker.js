@@ -36,10 +36,13 @@ async function captureElement(tabId, absRect) {
   const { absLeft, absTop, width, height } = absRect;
 
   const dims = await sendToTab(tabId, { action: 'GET_PAGE_DIMENSIONS' });
-  const { viewportHeight, totalHeight } = dims;
+  const { viewportHeight, viewportWidth, totalHeight, totalWidth } = dims;
   const maxScrollY = Math.max(0, totalHeight - viewportHeight);
+  const maxScrollX = Math.max(0, totalWidth - viewportWidth);
+  const actualScrollX = Math.min(Math.max(0, absLeft), maxScrollX);
 
   await sendToTab(tabId, { action: 'HIDE_SCROLLBAR' });
+  await sendToTab(tabId, { action: 'HIDE_FIXED' });
 
   const canvas = new OffscreenCanvas(
     Math.round(width * dpr),
@@ -55,7 +58,7 @@ async function captureElement(tabId, absRect) {
     const targetScrollY = absTop + sliceY;
     const actualScrollY = Math.min(targetScrollY, maxScrollY);
 
-    await sendToTab(tabId, { action: 'SCROLL_TO', y: actualScrollY, x: 0 });
+    await sendToTab(tabId, { action: 'SCROLL_TO', y: actualScrollY, x: actualScrollX });
 
     const elapsed = Date.now() - lastCaptureTime;
     if (elapsed < CAPTURE_INTERVAL) await sleep(CAPTURE_INTERVAL - elapsed);
@@ -74,7 +77,7 @@ async function captureElement(tabId, absRect) {
 
     ctx.drawImage(
       img,
-      Math.round(absLeft * dpr), Math.round(srcY * dpr),
+      Math.round((absLeft - actualScrollX) * dpr), Math.round(srcY * dpr),
       Math.round(width * dpr), Math.round(sliceHeight * dpr),
       0, Math.round(sliceY * dpr),
       Math.round(width * dpr), Math.round(sliceHeight * dpr)
@@ -83,6 +86,7 @@ async function captureElement(tabId, absRect) {
     sliceY += sliceHeight;
   }
 
+  await sendToTab(tabId, { action: 'RESTORE_FIXED' });
   await sendToTab(tabId, { action: 'RESTORE_SCROLLBAR' });
   await sendToTab(tabId, { action: 'SCROLL_TO', y: origin.y, x: origin.x });
 
