@@ -54,12 +54,10 @@ function onMouseClick(e) {
 
   const rect = currentTarget.getBoundingClientRect();
   const result = {
-    left: rect.left,
-    top: rect.top,
+    absLeft: rect.left + window.scrollX,
+    absTop: rect.top + window.scrollY,
     width: rect.width,
     height: rect.height,
-    scrollX: window.scrollX,
-    scrollY: window.scrollY,
   };
 
   deactivatePicker();
@@ -99,15 +97,12 @@ function resolveByXPath(xpath) {
 }
 
 function getElementRect(el) {
-  el.scrollIntoView({ behavior: 'instant', block: 'center' });
   const rect = el.getBoundingClientRect();
   return {
-    left: rect.left,
-    top: rect.top,
+    absLeft: rect.left + window.scrollX,
+    absTop: rect.top + window.scrollY,
     width: rect.width,
     height: rect.height,
-    scrollX: window.scrollX,
-    scrollY: window.scrollY,
   };
 }
 
