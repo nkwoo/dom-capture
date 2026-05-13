@@ -286,12 +286,18 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 
       if (msg.action === 'ELEMENT_SELECTED') {
         // content script → background (피커 클릭 후)
-        const croppedUrl = await captureElement(sender.tab.id, msg.rect);
-        await chrome.storage.session.set({
-          captureResult: { dataUrl: croppedUrl, timestamp: Date.now() }
-        });
-        await reopenUI(sender.tab.id);
-        sendResponse({ ok: true });
+        try {
+          const croppedUrl = await captureElement(sender.tab.id, msg.rect);
+          await chrome.storage.session.set({
+            captureResult: { dataUrl: croppedUrl, selector: msg.rect.selector, timestamp: Date.now() }
+          });
+          await reopenUI(sender.tab.id);
+          sendResponse({ ok: true });
+        } catch (err) {
+          sendResponse({ error: err.message });
+        } finally {
+          await sendToTab(sender.tab.id, { action: 'UNBLOCK_HOVER' });
+        }
 
       } else if (msg.action === 'ACTIVATE_PICKER') {
         const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
