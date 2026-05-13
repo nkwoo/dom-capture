@@ -4,6 +4,7 @@ let pickerActive = false;
 let overlay = null;
 let label = null;
 let currentTarget = null;
+let hoverBlocked = false;
 
 function createOverlay() {
   if (overlay) removeOverlay();
@@ -60,7 +61,7 @@ function onMouseClick(e) {
     height: rect.height,
   };
 
-  deactivatePicker();
+  deactivatePicker(true);  // 캡처 완료까지 hover 차단 유지
   chrome.runtime.sendMessage({ action: 'ELEMENT_SELECTED', rect: result });
 }
 
@@ -72,8 +73,14 @@ function onKeyDown(e) {
 }
 
 function onHoverEvent(e) {
-  if (!pickerActive) return;
+  if (!pickerActive && !hoverBlocked) return;
   e.stopPropagation();
+}
+
+function unblockHover() {
+  hoverBlocked = false;
+  document.removeEventListener('mouseover', onHoverEvent, true);
+  document.removeEventListener('mouseout', onHoverEvent, true);
 }
 
 function resolveByCSS(selector) {
@@ -175,16 +182,19 @@ function activatePicker() {
   document.body.style.cursor = 'crosshair';
 }
 
-function deactivatePicker() {
+function deactivatePicker(keepHoverBlocked = false) {
   pickerActive = false;
+  hoverBlocked = keepHoverBlocked;
   removeOverlay();
   document.removeEventListener('mousemove', onMouseMove, true);
   document.removeEventListener('click', onMouseClick, true);
   document.removeEventListener('keydown', onKeyDown, true);
-  document.removeEventListener('mouseover', onHoverEvent, true);
-  document.removeEventListener('mouseout', onHoverEvent, true);
   document.body.style.cursor = '';
   currentTarget = null;
+  if (!keepHoverBlocked) {
+    document.removeEventListener('mouseover', onHoverEvent, true);
+    document.removeEventListener('mouseout', onHoverEvent, true);
+  }
 }
 
 chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
@@ -218,6 +228,10 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
 
   } else if (msg.action === 'GET_SCROLL_POSITION') {
     sendResponse({ x: window.scrollX, y: window.scrollY });
+
+  } else if (msg.action === 'UNBLOCK_HOVER') {
+    unblockHover();
+    sendResponse({ ok: true });
 
   } else if (msg.action === 'HIDE_FIXED') {
     hideFixedElements();
