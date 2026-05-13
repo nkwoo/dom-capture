@@ -21,28 +21,6 @@ function blobToDataUrl(blob) {
   });
 }
 
-async function cropDataUrl(dataUrl, rect, dpr) {
-  const blob = await (await fetch(dataUrl)).blob();
-  const img = await createImageBitmap(blob);
-  const canvas = new OffscreenCanvas(
-    Math.round(rect.width * dpr),
-    Math.round(rect.height * dpr)
-  );
-  const ctx = canvas.getContext('2d');
-  ctx.drawImage(
-    img,
-    Math.round(rect.left * dpr),
-    Math.round(rect.top * dpr),
-    Math.round(rect.width * dpr),
-    Math.round(rect.height * dpr),
-    0, 0,
-    Math.round(rect.width * dpr),
-    Math.round(rect.height * dpr)
-  );
-  const outBlob = await canvas.convertToBlob({ type: 'image/png' });
-  return blobToDataUrl(outBlob);
-}
-
 async function getDevicePixelRatio(tabId) {
   const results = await chrome.scripting.executeScript({
     target: { tabId },
@@ -51,10 +29,64 @@ async function getDevicePixelRatio(tabId) {
   return results[0].result || 1;
 }
 
-async function captureElement(tabId, rect) {
+async function captureElement(tabId, absRect) {
+  const origin = await sendToTab(tabId, { action: 'GET_SCROLL_POSITION' });
   const dpr = await getDevicePixelRatio(tabId);
-  const dataUrl = await captureTab();
-  return cropDataUrl(dataUrl, rect, dpr);
+
+  const { absLeft, absTop, width, height } = absRect;
+
+  const dims = await sendToTab(tabId, { action: 'GET_PAGE_DIMENSIONS' });
+  const { viewportHeight, totalHeight } = dims;
+  const maxScrollY = Math.max(0, totalHeight - viewportHeight);
+
+  await sendToTab(tabId, { action: 'HIDE_SCROLLBAR' });
+
+  const canvas = new OffscreenCanvas(
+    Math.round(width * dpr),
+    Math.round(height * dpr)
+  );
+  const ctx = canvas.getContext('2d');
+
+  const CAPTURE_INTERVAL = 600;
+  let lastCaptureTime = 0;
+
+  let sliceY = 0;
+  while (sliceY < height) {
+    const targetScrollY = absTop + sliceY;
+    const actualScrollY = Math.min(targetScrollY, maxScrollY);
+
+    await sendToTab(tabId, { action: 'SCROLL_TO', y: actualScrollY, x: 0 });
+
+    const elapsed = Date.now() - lastCaptureTime;
+    if (elapsed < CAPTURE_INTERVAL) await sleep(CAPTURE_INTERVAL - elapsed);
+
+    const dataUrl = await captureTab();
+    lastCaptureTime = Date.now();
+
+    const imgBlob = await (await fetch(dataUrl)).blob();
+    const img = await createImageBitmap(imgBlob);
+
+    // 스크롤 클램핑 시(페이지 하단 요소) 요소가 뷰포트 상단이 아닌 아래쪽에서 시작
+    const srcY = targetScrollY - actualScrollY;
+    const remaining = height - sliceY;
+    const sliceHeight = Math.min(viewportHeight - srcY, remaining);
+
+    ctx.drawImage(
+      img,
+      Math.round(absLeft * dpr), Math.round(srcY * dpr),
+      Math.round(width * dpr), Math.round(sliceHeight * dpr),
+      0, Math.round(sliceY * dpr),
+      Math.round(width * dpr), Math.round(sliceHeight * dpr)
+    );
+
+    sliceY += sliceHeight;
+  }
+
+  await sendToTab(tabId, { action: 'RESTORE_SCROLLBAR' });
+  await sendToTab(tabId, { action: 'SCROLL_TO', y: origin.y, x: origin.x });
+
+  const blob = await canvas.convertToBlob({ type: 'image/png' });
+  return blobToDataUrl(blob);
 }
 
 function sendToTab(tabId, msg) {
@@ -150,7 +182,7 @@ async function captureFullPage(tabId) {
 
   await sendToTab(tabId, { action: 'RESTORE_FIXED' });
   await sendToTab(tabId, { action: 'RESTORE_SCROLLBAR' });
-  await sendToTab(tabId, { action: 'SCROLL_TO', y: origin.y });
+  await sendToTab(tabId, { action: 'SCROLL_TO', y: origin.y, x: origin.x });
 
   const blob = await canvas.convertToBlob({ type: 'image/png' });
   return blobToDataUrl(blob);
