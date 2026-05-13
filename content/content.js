@@ -53,16 +53,9 @@ function onMouseClick(e) {
   e.preventDefault();
   e.stopPropagation();
 
-  const rect = currentTarget.getBoundingClientRect();
-  const result = {
-    absLeft: rect.left + window.scrollX,
-    absTop: rect.top + window.scrollY,
-    width: rect.width,
-    height: rect.height,
-    selector: generateCSSSelector(currentTarget),
-  };
+  const result = { ...getElementRect(currentTarget), selector: generateCSSSelector(currentTarget) };
 
-  deactivatePicker(true);  // 캡처 완료까지 hover 차단 유지
+  deactivatePicker(true);
   chrome.runtime.sendMessage({ action: 'ELEMENT_SELECTED', rect: result });
 }
 
@@ -111,7 +104,7 @@ function generateCSSSelector(el) {
   let current = el;
   while (current && current !== document.body && current !== document.documentElement) {
     if (current.id) {
-      parts.unshift('#' + CSS.escape(current.id));
+      parts.push('#' + CSS.escape(current.id));
       break;
     }
     let part = current.tagName.toLowerCase();
@@ -120,21 +113,21 @@ function generateCSSSelector(el) {
     }
     const parent = current.parentElement;
     if (parent) {
-      const siblings = Array.from(parent.children).filter(s => s.tagName === current.tagName);
-      if (siblings.length > 1) {
-        part += ':nth-of-type(' + (siblings.indexOf(current) + 1) + ')';
+      let sameTagCount = 0, currentIdx = 0;
+      for (const child of parent.children) {
+        if (child.tagName === current.tagName) {
+          sameTagCount++;
+          if (child === current) currentIdx = sameTagCount;
+        }
       }
+      if (sameTagCount > 1) part += ':nth-of-type(' + currentIdx + ')';
     }
-    parts.unshift(part);
+    parts.push(part);
     current = current.parentElement;
   }
+  parts.reverse();
   const selector = parts.join(' > ');
-  // 생성된 selector가 동일한 요소를 가리키는지 검증
-  try {
-    if (document.querySelector(selector) !== el) return '';
-  } catch (_) {
-    return '';
-  }
+  if (resolveByCSS(selector) !== el) return '';
   return selector;
 }
 
@@ -207,6 +200,7 @@ function restoreFixedElements() {
 }
 
 function activatePicker() {
+  if (pickerActive) deactivatePicker();
   pickerActive = true;
   hoverBlocked = false;
   createOverlay();
@@ -232,6 +226,8 @@ function deactivatePicker(keepHoverBlocked = false) {
     document.removeEventListener('mouseout', onHoverEvent, true);
   }
 }
+
+window.addEventListener('pagehide', unblockHover);
 
 chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
   if (msg.action === 'ACTIVATE_PICKER') {
@@ -288,6 +284,4 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
   } else {
     sendResponse({ error: `Unknown action: ${msg.action}` });
   }
-
-  return true;
 });
