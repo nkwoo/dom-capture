@@ -144,8 +144,9 @@ function restoreScrollbar() {
 let hiddenFixedElements = [];
 
 function hideFixedElements() {
-  hiddenFixedElements = [];
+  const alreadyHidden = new Set(hiddenFixedElements.map(item => item.el));
   document.querySelectorAll('*').forEach(el => {
+    if (alreadyHidden.has(el)) return;
     const pos = window.getComputedStyle(el).position;
     if (pos === 'fixed' || pos === 'sticky') {
       hiddenFixedElements.push({ el, visibility: el.style.visibility });

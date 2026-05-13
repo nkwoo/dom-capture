@@ -106,6 +106,12 @@ async function captureFullPage(tabId) {
   while (y < totalHeight) {
     await sendToTab(tabId, { action: 'SCROLL_TO', y });
 
+    // 스크롤 후 페이지 JS가 동적으로 추가한 fixed/sticky 요소를 잡기 위해 재호출.
+    // 첫 슬라이스는 캡처 후에 숨기고, 이후 슬라이스는 캡처 전에 숨김.
+    if (fixedHidden) {
+      await sendToTab(tabId, { action: 'HIDE_FIXED' });
+    }
+
     const elapsed = Date.now() - lastCaptureTime;
     if (elapsed < CAPTURE_INTERVAL) {
       await sleep(CAPTURE_INTERVAL - elapsed);
@@ -114,8 +120,6 @@ async function captureFullPage(tabId) {
     const dataUrl = await captureTab();
     lastCaptureTime = Date.now();
 
-    // 첫 번째 슬라이스(y=0)는 fixed 요소(헤더)가 보이는 상태로 캡처하여 최상단에 한 번 표시.
-    // 캡처 직후 숨겨서 이후 슬라이스에서는 반복되지 않도록 함.
     if (!fixedHidden) {
       await sendToTab(tabId, { action: 'HIDE_FIXED' });
       fixedHidden = true;
