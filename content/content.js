@@ -59,6 +59,7 @@ function onMouseClick(e) {
     absTop: rect.top + window.scrollY,
     width: rect.width,
     height: rect.height,
+    selector: generateCSSSelector(currentTarget),
   };
 
   deactivatePicker(true);  // 캡처 완료까지 hover 차단 유지
@@ -101,6 +102,33 @@ function resolveByXPath(xpath) {
   } catch (_) {
     return null;
   }
+}
+
+function generateCSSSelector(el) {
+  if (el.id) return '#' + el.id;
+
+  const parts = [];
+  let current = el;
+  while (current && current !== document.body && current !== document.documentElement) {
+    if (current.id) {
+      parts.unshift('#' + current.id);
+      break;
+    }
+    let part = current.tagName.toLowerCase();
+    if (current.classList.length > 0) {
+      part += '.' + Array.from(current.classList).slice(0, 2).join('.');
+    }
+    const parent = current.parentElement;
+    if (parent) {
+      const siblings = Array.from(parent.children).filter(s => s.tagName === current.tagName);
+      if (siblings.length > 1) {
+        part += ':nth-of-type(' + (siblings.indexOf(current) + 1) + ')';
+      }
+    }
+    parts.unshift(part);
+    current = current.parentElement;
+  }
+  return parts.join(' > ');
 }
 
 function getElementRect(el) {
