@@ -70,6 +70,7 @@ async function captureElement(tabId, absRect) {
     const srcY = targetScrollY - actualScrollY;
     const remaining = height - sliceY;
     const sliceHeight = Math.min(viewportHeight - srcY, remaining);
+    if (sliceHeight <= 0) break;
 
     ctx.drawImage(
       img,
