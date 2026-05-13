@@ -215,7 +215,9 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
     sendResponse(getPageDimensions());
 
   } else if (msg.action === 'SCROLL_TO') {
-    window.scrollTo({ top: msg.y, behavior: 'instant' });
+    const top = msg.y !== undefined ? msg.y : window.scrollY;
+    const left = msg.x !== undefined ? msg.x : window.scrollX;
+    window.scrollTo({ top, left, behavior: 'instant' });
     setTimeout(() => sendResponse({ ok: true }), 200);
     return true;
 
