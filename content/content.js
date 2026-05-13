@@ -208,6 +208,7 @@ function restoreFixedElements() {
 
 function activatePicker() {
   pickerActive = true;
+  hoverBlocked = false;
   createOverlay();
   document.addEventListener('mousemove', onMouseMove, true);
   document.addEventListener('click', onMouseClick, true);
