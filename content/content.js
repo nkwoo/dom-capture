@@ -105,18 +105,18 @@ function resolveByXPath(xpath) {
 }
 
 function generateCSSSelector(el) {
-  if (el.id) return '#' + el.id;
+  if (el.id) return '#' + CSS.escape(el.id);
 
   const parts = [];
   let current = el;
   while (current && current !== document.body && current !== document.documentElement) {
     if (current.id) {
-      parts.unshift('#' + current.id);
+      parts.unshift('#' + CSS.escape(current.id));
       break;
     }
     let part = current.tagName.toLowerCase();
     if (current.classList.length > 0) {
-      part += '.' + Array.from(current.classList).slice(0, 2).join('.');
+      part += '.' + Array.from(current.classList).slice(0, 2).map(c => CSS.escape(c)).join('.');
     }
     const parent = current.parentElement;
     if (parent) {
@@ -128,7 +128,14 @@ function generateCSSSelector(el) {
     parts.unshift(part);
     current = current.parentElement;
   }
-  return parts.join(' > ');
+  const selector = parts.join(' > ');
+  // 생성된 selector가 동일한 요소를 가리키는지 검증
+  try {
+    if (document.querySelector(selector) !== el) return '';
+  } catch (_) {
+    return '';
+  }
+  return selector;
 }
 
 function getElementRect(el) {
