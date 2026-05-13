@@ -85,6 +85,8 @@ async function captureElement(tabId, absRect) {
       const actualScrollY = Math.min(targetScrollY, maxScrollY);
 
       await sendToTab(tabId, { action: 'SCROLL_TO', y: actualScrollY, x: actualScrollX });
+      // 스크롤 후 동적으로 추가된 fixed 요소를 잡기 위해 재호출 (captureFullPage와 동일)
+      await sendToTab(tabId, { action: 'HIDE_FIXED' });
 
       const elapsed = Date.now() - lastCaptureTime;
       if (elapsed < CAPTURE_INTERVAL) await sleep(CAPTURE_INTERVAL - elapsed);
