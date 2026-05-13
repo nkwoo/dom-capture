@@ -167,6 +167,10 @@ btnClipboard.addEventListener('click', async () => {
   const result = await send({ action: 'GET_RESULT' });
   if (result && result.dataUrl) {
     setPreview(result.dataUrl);
+    if (result.selector) {
+      selectorType.value = 'css';
+      selectorInput.value = result.selector;
+    }
     showStatus('요소 캡처 완료! 다운로드 또는 복사하세요.', 'success');
   }
   chrome.action.setBadgeText({ text: '' });
