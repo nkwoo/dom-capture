@@ -56,6 +56,7 @@ function onMouseClick(e) {
   const result = { ...getElementRect(currentTarget), selector: generateCSSSelector(currentTarget) };
 
   deactivatePicker(true);
+  // Two rAFs ensure the overlay removal is painted before captureVisibleTab() fires
   requestAnimationFrame(() => requestAnimationFrame(() => {
     chrome.runtime.sendMessage({ action: 'ELEMENT_SELECTED', rect: result });
   }));
