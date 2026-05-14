@@ -2,6 +2,26 @@
 
 let capturedDataUrl = null;
 
+const t = chrome.i18n.getMessage;
+
+function applyI18n() {
+  document.documentElement.lang = t('@@ui_locale');
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const msg = t(el.dataset.i18n);
+    if (msg) el.textContent = msg;
+  });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    const msg = t(el.dataset.i18nPlaceholder);
+    if (msg) el.placeholder = msg;
+  });
+  document.querySelectorAll('[data-i18n-alt]').forEach(el => {
+    const msg = t(el.dataset.i18nAlt);
+    if (msg) el.alt = msg;
+  });
+}
+
+applyI18n();
+
 const tabs = document.querySelectorAll('.tab');
 const panels = {
   element: document.getElementById('panel-element'),
@@ -43,24 +63,21 @@ function send(msg) {
   return new Promise((resolve) => chrome.runtime.sendMessage(msg, resolve));
 }
 
-// 탭 전환
 tabs.forEach(tab => {
   tab.addEventListener('click', () => {
-    tabs.forEach(t => t.classList.remove('active'));
+    tabs.forEach(other => other.classList.remove('active'));
     tab.classList.add('active');
     Object.values(panels).forEach(p => p.classList.add('hidden'));
     panels[tab.dataset.tab].classList.remove('hidden');
   });
 });
 
-// PDF 선택 시 클립보드 버튼 비활성화
 document.querySelectorAll('input[name="format"]').forEach(r => {
   r.addEventListener('change', () => {
     btnClipboard.disabled = getFormat() === 'pdf';
   });
 });
 
-// 피커 버튼: 팝업을 닫고 페이지에서 요소 선택
 btnPicker.addEventListener('click', async () => {
   const result = await send({ action: 'ACTIVATE_PICKER' });
   if (result && result.error) {
@@ -70,12 +87,11 @@ btnPicker.addEventListener('click', async () => {
   window.close();
 });
 
-// 셀렉터로 요소 캡처
 btnFind.addEventListener('click', async () => {
   const selector = selectorInput.value.trim();
-  if (!selector) { showStatus('셀렉터를 입력해 주세요.', 'error'); return; }
+  if (!selector) { showStatus(t('status_enter_selector'), 'error'); return; }
 
-  showStatus('요소를 찾는 중...', 'info');
+  showStatus(t('status_finding'), 'info');
   clearPreview();
   btnFind.disabled = true;
 
@@ -90,15 +106,14 @@ btnFind.addEventListener('click', async () => {
     showStatus(result.error, 'error');
   } else if (result && result.dataUrl) {
     setPreview(result.dataUrl);
-    showStatus('캡처 완료!', 'success');
+    showStatus(t('status_capture_done'), 'success');
   } else {
-    showStatus('캡처에 실패했습니다.', 'error');
+    showStatus(t('status_capture_failed'), 'error');
   }
 });
 
-// 현재 화면 캡처
 btnViewport.addEventListener('click', async () => {
-  showStatus('캡처 중...', 'info');
+  showStatus(t('status_capturing'), 'info');
   clearPreview();
   btnViewport.disabled = true;
 
@@ -107,15 +122,14 @@ btnViewport.addEventListener('click', async () => {
 
   if (result && result.dataUrl) {
     setPreview(result.dataUrl);
-    showStatus('캡처 완료!', 'success');
+    showStatus(t('status_capture_done'), 'success');
   } else {
-    showStatus(result?.error || '캡처에 실패했습니다.', 'error');
+    showStatus(result?.error || t('status_capture_failed'), 'error');
   }
 });
 
-// 전체 페이지 캡처
 btnFullpage.addEventListener('click', async () => {
-  showStatus('전체 페이지 캡처 중... (잠시 기다려 주세요)', 'info');
+  showStatus(t('status_fullpage_capturing'), 'info');
   clearPreview();
   btnFullpage.disabled = true;
 
@@ -124,16 +138,15 @@ btnFullpage.addEventListener('click', async () => {
 
   if (result && result.dataUrl) {
     setPreview(result.dataUrl);
-    showStatus('캡처 완료!', 'success');
+    showStatus(t('status_capture_done'), 'success');
   } else {
-    showStatus(result?.error || '캡처에 실패했습니다.', 'error');
+    showStatus(result?.error || t('status_capture_failed'), 'error');
   }
 });
 
-// 다운로드
 btnDownload.addEventListener('click', async () => {
-  if (!capturedDataUrl) { showStatus('먼저 캡처를 진행해 주세요.', 'error'); return; }
-  showStatus('다운로드 중...', 'info');
+  if (!capturedDataUrl) { showStatus(t('status_capture_first'), 'error'); return; }
+  showStatus(t('status_downloading'), 'info');
 
   const result = await send({
     action: 'DOWNLOAD',
@@ -142,27 +155,24 @@ btnDownload.addEventListener('click', async () => {
   });
 
   if (result && result.ok) {
-    showStatus('다운로드 완료!', 'success');
+    showStatus(t('status_download_done'), 'success');
   } else {
-    showStatus(result?.error || '다운로드에 실패했습니다.', 'error');
+    showStatus(result?.error || t('status_download_failed'), 'error');
   }
 });
 
-// 클립보드 복사 (PNG only, 팝업 컨텍스트에서 실행)
 btnClipboard.addEventListener('click', async () => {
-  if (!capturedDataUrl) { showStatus('먼저 캡처를 진행해 주세요.', 'error'); return; }
+  if (!capturedDataUrl) { showStatus(t('status_capture_first'), 'error'); return; }
   try {
     const blob = await (await fetch(capturedDataUrl)).blob();
     await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
-    showStatus('클립보드에 복사되었습니다!', 'success');
+    showStatus(t('status_clipboard_done'), 'success');
   } catch (_) {
-    // 복사 실패 시 다운로드로 폴백
     await send({ action: 'DOWNLOAD', dataUrl: capturedDataUrl, format: 'png' });
-    showStatus('클립보드 복사 실패 → 다운로드로 저장했습니다.', 'info');
+    showStatus(t('status_clipboard_fallback'), 'info');
   }
 });
 
-// 팝업 열릴 때: 피커로 선택된 결과가 있으면 표시, 배지 초기화
 (async () => {
   const result = await send({ action: 'GET_RESULT' });
   if (result && result.dataUrl) {
@@ -171,7 +181,7 @@ btnClipboard.addEventListener('click', async () => {
       selectorType.value = 'css';
       selectorInput.value = result.selector;
     }
-    showStatus('요소 캡처 완료! 다운로드 또는 복사하세요.', 'success');
+    showStatus(t('status_element_captured'), 'success');
   }
   chrome.action.setBadgeText({ text: '' });
 })();
