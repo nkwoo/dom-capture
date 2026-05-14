@@ -30,7 +30,7 @@ for (const locale of LOCALES) {
   for (const key of EXPECTED_KEYS) {
     assert.ok(key in messages, `[${locale}] Missing key: "${key}"`);
     assert.ok(
-      typeof messages[key].message === 'string' && messages[key].message.length > 0,
+      typeof messages[key].message === 'string' && messages[key].message.trim().length > 0,
       `[${locale}] Empty message for key: "${key}"`
     );
   }
