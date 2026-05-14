@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>DOM Capture</title>
@@ -10,42 +10,44 @@
     <h1 class="title">DOM Capture</h1>
 
     <div class="tabs" role="tablist">
-      <button class="tab active" data-tab="element" role="tab">요소 캡처</button>
-      <button class="tab" data-tab="page" role="tab">페이지 캡처</button>
+      <button class="tab active" data-tab="element" role="tab" data-i18n="tab_element">Element</button>
+      <button class="tab" data-tab="page" role="tab" data-i18n="tab_page">Page</button>
     </div>
 
-    <!-- 요소 캡처 패널 -->
+    <!-- Element capture panel -->
     <div class="panel" id="panel-element">
-      <button class="btn btn-primary" id="btn-picker">마우스로 요소 선택</button>
-      <div class="divider">또는</div>
+      <button class="btn btn-primary" id="btn-picker" data-i18n="btn_picker">Pick Element with Mouse</button>
+      <div class="divider" data-i18n="divider_or">or</div>
       <div class="input-group">
         <select id="selector-type">
           <option value="css">CSS</option>
           <option value="xpath">XPath</option>
         </select>
-        <input type="text" id="selector-input" placeholder=".my-class 또는 //div[@id='x']">
+        <input type="text" id="selector-input"
+               data-i18n-placeholder="selector_placeholder"
+               placeholder=".my-class or //div[@id='x']">
       </div>
-      <button class="btn btn-secondary" id="btn-find">요소 찾기 &amp; 캡처</button>
+      <button class="btn btn-secondary" id="btn-find" data-i18n="btn_find">Find &amp; Capture Element</button>
     </div>
 
-    <!-- 페이지 캡처 패널 -->
+    <!-- Page capture panel -->
     <div class="panel hidden" id="panel-page">
-      <button class="btn btn-secondary" id="btn-viewport">현재 화면 캡처</button>
-      <button class="btn btn-secondary" id="btn-fullpage">전체 페이지 캡처</button>
+      <button class="btn btn-secondary" id="btn-viewport" data-i18n="btn_viewport">Capture Viewport</button>
+      <button class="btn btn-secondary" id="btn-fullpage" data-i18n="btn_fullpage">Capture Full Page</button>
     </div>
 
-    <!-- 포맷 & 출력 -->
+    <!-- Format & output -->
     <div class="output-section">
       <div class="format-group">
         <label><input type="radio" name="format" value="png" checked> PNG</label>
         <label><input type="radio" name="format" value="pdf"> PDF</label>
       </div>
       <div class="action-buttons">
-        <button class="btn btn-primary" id="btn-download">다운로드</button>
-        <button class="btn btn-secondary" id="btn-clipboard">클립보드 복사</button>
+        <button class="btn btn-primary" id="btn-download" data-i18n="btn_download">Download</button>
+        <button class="btn btn-secondary" id="btn-clipboard" data-i18n="btn_clipboard">Copy to Clipboard</button>
       </div>
       <div id="preview-container">
-        <img id="preview-img" alt="캡처 미리보기">
+        <img id="preview-img" data-i18n-alt="preview_alt" alt="Capture Preview">
       </div>
     </div>
 
