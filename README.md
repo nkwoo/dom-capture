@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="logo.png" alt="DOM Capture" width="128" />
+  <img src="logo.png" alt="DOM Capture" width="500" />
 </p>
 
 <h1 align="center">DOM Capture</h1>
