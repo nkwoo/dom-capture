@@ -56,7 +56,9 @@ function onMouseClick(e) {
   const result = { ...getElementRect(currentTarget), selector: generateCSSSelector(currentTarget) };
 
   deactivatePicker(true);
-  chrome.runtime.sendMessage({ action: 'ELEMENT_SELECTED', rect: result });
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    chrome.runtime.sendMessage({ action: 'ELEMENT_SELECTED', rect: result });
+  }));
 }
 
 function onKeyDown(e) {
