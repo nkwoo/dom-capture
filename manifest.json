@@ -1,8 +1,9 @@
 {
   "manifest_version": 3,
-  "name": "DOM Capture",
+  "name": "__MSG_ext_name__",
   "version": "1.0.0",
-  "description": "Capture DOM elements or full pages as PNG or PDF",
+  "description": "__MSG_ext_description__",
+  "default_locale": "en",
   "permissions": ["activeTab", "tabs", "downloads", "clipboardWrite", "scripting", "storage", "sidePanel"],
   "host_permissions": ["<all_urls>"],
   "background": {
