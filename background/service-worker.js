@@ -279,7 +279,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
       if (CAPTURE_ACTIONS.includes(msg.action)) {
         const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
         if (isUnsupportedTab(tab)) {
-          sendResponse({ error: '이 페이지는 캡처할 수 없습니다.' });
+          sendResponse({ error: chrome.i18n.getMessage('error_unsupported_page') });
           return;
         }
       }

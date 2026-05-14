@@ -243,7 +243,7 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
       ? resolveByXPath(msg.selector)
       : resolveByCSS(msg.selector);
     if (!el) {
-      sendResponse({ error: '요소를 찾을 수 없습니다.' });
+      sendResponse({ error: chrome.i18n.getMessage('error_element_not_found') });
     } else {
       sendResponse({ rect: getElementRect(el) });
     }
