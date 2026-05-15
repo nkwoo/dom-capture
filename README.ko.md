@@ -26,7 +26,7 @@
 
 ### 방법 A — Chrome 웹 스토어
 
-[Chrome 웹 스토어](https://chrome.google.com/webstore)에서 **DOM Capture**를 검색한 뒤 **Chrome에 추가**를 클릭하세요.
+[Chrome 웹 스토어](https://chromewebstore.google.com/detail/dom-capture/cmknlcgmcbinbngoijkmbihpohjkokda)에서 **Chrome에 추가**를 클릭하세요.
 
 ### 방법 B — 직접 설치 (개발자 모드)
 

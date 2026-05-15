@@ -26,7 +26,7 @@
 
 ### Option A — Chrome Web Store
 
-Search for **DOM Capture** in the [Chrome Web Store](https://chrome.google.com/webstore) and click **Add to Chrome**.
+Install directly from the [Chrome Web Store](https://chromewebstore.google.com/detail/dom-capture/cmknlcgmcbinbngoijkmbihpohjkokda) and click **Add to Chrome**.
 
 ### Option B — Manual (Developer Mode)
 
