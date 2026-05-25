@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="logo.png" alt="DOM Capture" width="500" />
+  <img src="../logo.png" alt="DOM Capture" width="500" />
 </p>
 
 <h1 align="center">DOM Capture</h1>
@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  <a href="README.md">English</a>
+  <a href="../README.md">English</a>
 </p>
 
 ---
@@ -82,4 +82,4 @@ PR은 하나의 기능 또는 버그 수정에 집중해 주세요.
 
 ## 라이선스
 
-[MIT](LICENSE)
+[MIT](../LICENSE)
