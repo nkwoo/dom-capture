@@ -16,7 +16,7 @@
   <a href="docs/README.de.md">Deutsch</a> |
   <a href="docs/README.fr.md">Français</a> |
   <a href="docs/README.es.md">Español</a> |
-  <a href="docs/README.pt_BR.md">Português</a> |
+  <a href="docs/README.pt_BR.md">Português (Brasil)</a> |
   <a href="docs/README.ru.md">Русский</a>
 </p>
 
