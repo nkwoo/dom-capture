@@ -72,7 +72,7 @@ Por favor, mantén las pull requests enfocadas — una funcionalidad o correcci�
 
 ## Reportar problemas
 
-¿Encontraste un bug o tienes una solicitud de función? [Abre un issue](../../issues/new) e incluye:
+¿Encontraste un bug o tienes una solicitud de función? [Abre un issue](https://github.com/nkwoo/dom-capture/issues/new) e incluye:
 
 - Versión de Chrome (`chrome://version`)
 - Versión de la extensión (visible en `chrome://extensions`)
@@ -82,4 +82,4 @@ Por favor, mantén las pull requests enfocadas — una funcionalidad o correcci�
 
 ## Licencia
 
-[MIT](../LICENSE)
+[MIT](https://github.com/nkwoo/dom-capture/blob/main/LICENSE)

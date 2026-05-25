@@ -72,7 +72,7 @@
 
 ## Сообщить о проблеме
 
-Нашли ошибку или хотите предложить функцию? [Откройте issue](../../issues/new) и укажите:
+Нашли ошибку или хотите предложить функцию? [Откройте issue](https://github.com/nkwoo/dom-capture/issues/new) и укажите:
 
 - Версию Chrome (`chrome://version`)
 - Версию расширения (видна в `chrome://extensions`)
@@ -82,4 +82,4 @@
 
 ## Лицензия
 
-[MIT](../LICENSE)
+[MIT](https://github.com/nkwoo/dom-capture/blob/main/LICENSE)

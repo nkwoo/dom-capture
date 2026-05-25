@@ -72,7 +72,7 @@
 
 ## 问题反馈
 
-发现了Bug或有功能建议？[提交Issue](../../issues/new) 并包含以下信息：
+发现了Bug或有功能建议？[提交Issue](https://github.com/nkwoo/dom-capture/issues/new) 并包含以下信息：
 
 - Chrome版本（`chrome://version`）
 - 扩展程序版本（在 `chrome://extensions` 中查看）
@@ -82,4 +82,4 @@
 
 ## 许可证
 
-[MIT](../LICENSE)
+[MIT](https://github.com/nkwoo/dom-capture/blob/main/LICENSE)

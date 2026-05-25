@@ -31,8 +31,8 @@ for (const locale of NON_ENGLISH_LOCALES) {
 
   const content = fs.readFileSync(filePath, 'utf8');
   assert.ok(content.includes('../logo.png'), `[${locale}] Missing ../logo.png path`);
-  assert.ok(content.includes('../LICENSE'), `[${locale}] Missing ../LICENSE path`);
-  assert.ok(content.includes('../../issues/new'), `[${locale}] Missing ../../issues/new link`);
+  assert.ok(content.includes('https://github.com/nkwoo/dom-capture/blob/main/LICENSE'), `[${locale}] Missing absolute LICENSE link`);
+  assert.ok(content.includes('https://github.com/nkwoo/dom-capture/issues/new'), `[${locale}] Missing absolute issues/new link`);
   assert.ok(content.includes('../README.md'), `[${locale}] Missing link back to ../README.md`);
   console.log(`✓  docs/README.${locale}.md: exists, paths correct`);
 }

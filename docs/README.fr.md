@@ -72,7 +72,7 @@ Veuillez garder les pull requests focalisées — une fonctionnalité ou correct
 
 ## Signaler un problème
 
-Vous avez trouvé un bug ou souhaitez proposer une fonctionnalité ? [Ouvrez une issue](../../issues/new) en incluant :
+Vous avez trouvé un bug ou souhaitez proposer une fonctionnalité ? [Ouvrez une issue](https://github.com/nkwoo/dom-capture/issues/new) en incluant :
 
 - Version de Chrome (`chrome://version`)
 - Version de l'extension (visible dans `chrome://extensions`)
@@ -82,4 +82,4 @@ Vous avez trouvé un bug ou souhaitez proposer une fonctionnalité ? [Ouvrez une
 
 ## Licence
 
-[MIT](../LICENSE)
+[MIT](https://github.com/nkwoo/dom-capture/blob/main/LICENSE)

@@ -72,7 +72,7 @@ PRは一つの機能またはバグ修正に集中してください。
 
 ## 問題報告
 
-バグを発見したり機能リクエストがある場合は、[Issueを開いて](../../issues/new)以下の情報をご記入ください：
+バグを発見したり機能リクエストがある場合は、[Issueを開いて](https://github.com/nkwoo/dom-capture/issues/new)以下の情報をご記入ください：
 
 - Chromeバージョン（`chrome://version`）
 - 拡張機能バージョン（`chrome://extensions` で確認）
@@ -82,4 +82,4 @@ PRは一つの機能またはバグ修正に集中してください。
 
 ## ライセンス
 
-[MIT](../LICENSE)
+[MIT](https://github.com/nkwoo/dom-capture/blob/main/LICENSE)

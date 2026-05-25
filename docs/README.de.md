@@ -72,7 +72,7 @@ Bitte halte Pull Requests fokussiert — ein Feature oder Bugfix pro PR.
 
 ## Fehler melden
 
-Einen Fehler gefunden oder einen Funktionswunsch? [Issue öffnen](../../issues/new) und folgende Informationen angeben:
+Einen Fehler gefunden oder einen Funktionswunsch? [Issue öffnen](https://github.com/nkwoo/dom-capture/issues/new) und folgende Informationen angeben:
 
 - Chrome-Version (`chrome://version`)
 - Erweiterungsversion (sichtbar unter `chrome://extensions`)
@@ -82,4 +82,4 @@ Einen Fehler gefunden oder einen Funktionswunsch? [Issue öffnen](../../issues/n
 
 ## Lizenz
 
-[MIT](../LICENSE)
+[MIT](https://github.com/nkwoo/dom-capture/blob/main/LICENSE)
