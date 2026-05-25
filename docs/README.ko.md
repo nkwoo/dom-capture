@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="logo.png" alt="DOM Capture" width="500" />
+  <img src="../logo.png" alt="DOM Capture" width="500" />
 </p>
 
 <h1 align="center">DOM Capture</h1>
@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  <a href="README.md">English</a>
+  <a href="../README.md">English</a>
 </p>
 
 ---
@@ -72,7 +72,7 @@ PR은 하나의 기능 또는 버그 수정에 집중해 주세요.
 
 ## 이슈 제기
 
-버그를 발견하거나 기능을 제안하고 싶으신가요? [이슈를 열어주세요](../../issues/new). 아래 정보를 포함해 주시면 빠른 처리에 도움이 됩니다:
+버그를 발견하거나 기능을 제안하고 싶으신가요? [이슈를 열어주세요](https://github.com/nkwoo/dom-capture/issues/new). 아래 정보를 포함해 주시면 빠른 처리에 도움이 됩니다:
 
 - Chrome 버전 (`chrome://version`)
 - 확장 프로그램 버전 (`chrome://extensions`에서 확인)
@@ -82,4 +82,4 @@ PR은 하나의 기능 또는 버그 수정에 집중해 주세요.
 
 ## 라이선스
 
-[MIT](LICENSE)
+[MIT](https://github.com/nkwoo/dom-capture/blob/main/LICENSE)

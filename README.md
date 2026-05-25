@@ -9,7 +9,15 @@
 </p>
 
 <p align="center">
-  <a href="README.ko.md">한국어</a>
+  <a href="docs/README.ko.md">한국어</a> |
+  <a href="docs/README.ja.md">日本語</a> |
+  <a href="docs/README.zh_CN.md">简体中文</a> |
+  <a href="docs/README.zh_TW.md">繁體中文</a> |
+  <a href="docs/README.de.md">Deutsch</a> |
+  <a href="docs/README.fr.md">Français</a> |
+  <a href="docs/README.es.md">Español</a> |
+  <a href="docs/README.pt_BR.md">Português (Brasil)</a> |
+  <a href="docs/README.ru.md">Русский</a>
 </p>
 
 ---
