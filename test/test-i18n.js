@@ -19,7 +19,10 @@ const EXPECTED_KEYS = [
   'error_element_not_found', 'error_unsupported_page',
 ];
 
-const LOCALES = ['en', 'ko'];
+const localesDir = path.join(__dirname, '..', '_locales');
+const LOCALES = fs.readdirSync(localesDir).filter(entry =>
+  fs.statSync(path.join(localesDir, entry)).isDirectory()
+);
 
 for (const locale of LOCALES) {
   const filePath = path.join(__dirname, '..', '_locales', locale, 'messages.json');
@@ -33,7 +36,12 @@ for (const locale of LOCALES) {
       typeof messages[key].message === 'string' && messages[key].message.trim().length > 0,
       `[${locale}] Empty message for key: "${key}"`
     );
+    if (key === 'ext_name') {
+      assert.strictEqual(messages[key].message, 'DOM Capture', `[${locale}] ext_name must be "DOM Capture"`);
+    }
   }
+  const extraKeys = Object.keys(messages).filter(k => !EXPECTED_KEYS.includes(k));
+  assert.strictEqual(extraKeys.length, 0, `[${locale}] Unexpected extra keys: ${extraKeys.join(', ')}`);
   console.log(`✓  ${locale}: all ${EXPECTED_KEYS.length} keys present and non-empty`);
 }
 
