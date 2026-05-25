@@ -19,7 +19,10 @@ const EXPECTED_KEYS = [
   'error_element_not_found', 'error_unsupported_page',
 ];
 
-const LOCALES = ['en', 'ko'];
+const localesDir = path.join(__dirname, '..', '_locales');
+const LOCALES = fs.readdirSync(localesDir).filter(entry =>
+  fs.statSync(path.join(localesDir, entry)).isDirectory()
+);
 
 for (const locale of LOCALES) {
   const filePath = path.join(__dirname, '..', '_locales', locale, 'messages.json');
