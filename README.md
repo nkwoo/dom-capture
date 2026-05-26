@@ -26,6 +26,7 @@
 
 - **Element Picker** — hover over any element and click to capture it
 - **CSS / XPath Selector** — capture a specific element by selector
+- **Region Capture** — drag a rectangle over the viewport to capture a selected area
 - **Viewport Capture** — screenshot the current visible area
 - **Full Page Capture** — scroll-and-stitch screenshot of the entire page
 - **Export** — save as PNG or PDF, or copy to clipboard
@@ -61,6 +62,7 @@ Install directly from the [Chrome Web Store](https://chromewebstore.google.com/d
 |------|-----|
 | Capture an element | Click the extension icon → **Pick Element** → click any element on the page |
 | Capture by selector | Click the extension icon → enter a CSS or XPath selector → **Capture** |
+| Capture a region | Click the extension icon → **Region** tab → drag to select an area → **Capture** |
 | Capture viewport | Click the extension icon → **Viewport** tab → **Capture** |
 | Capture full page | Click the extension icon → **Full Page** tab → **Capture** |
 | Download | After capture, click **Download** (PNG or PDF) |

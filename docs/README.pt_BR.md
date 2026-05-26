@@ -18,6 +18,7 @@
 
 - **Seletor de elementos** — Passe o mouse sobre qualquer elemento e clique para capturá-lo
 - **Seletor CSS / XPath** — Capture um elemento específico por seletor
+- **Captura de região** — Arraste um retângulo sobre a janela para capturar a área selecionada
 - **Captura de janela** — Captura de tela da área visível atual
 - **Captura de página inteira** — Captura com rolagem da página inteira
 - **Exportar** — Salvar como PNG ou PDF, ou copiar para a área de transferência
@@ -53,6 +54,7 @@ Na [Chrome Web Store](https://chromewebstore.google.com/detail/dom-capture/cmknl
 |--------|------|
 | Capturar um elemento | Clique no ícone → **Selecionar elemento** → Clique em qualquer elemento da página |
 | Capturar por seletor | Clique no ícone → Digite um seletor CSS ou XPath → **Capturar** |
+| Capturar uma região | Clique no ícone → Aba **Região** → Arraste para selecionar uma área → **Capturar** |
 | Capturar janela | Clique no ícone → Aba **Janela** → **Capturar** |
 | Capturar página inteira | Clique no ícone → Aba **Página inteira** → **Capturar** |
 | Baixar | Após captura, clique em **Baixar** (PNG ou PDF) |

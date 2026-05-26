@@ -18,6 +18,7 @@
 
 - **Element-Picker** — Fahre über ein Element und klicke es an, um es zu erfassen
 - **CSS / XPath-Selektor** — Erfasse ein bestimmtes Element per Selektor
+- **Bereichserfassung** — Ziehe ein Rechteck über den Viewport, um einen ausgewählten Bereich zu erfassen
 - **Viewport erfassen** — Screenshot des aktuell sichtbaren Bereichs
 - **Gesamte Seite erfassen** — Scrollendes Screenshot der gesamten Seite
 - **Export** — Als PNG oder PDF speichern oder in die Zwischenablage kopieren
@@ -53,6 +54,7 @@ Im [Chrome Web Store](https://chromewebstore.google.com/detail/dom-capture/cmknl
 |---------|----------------|
 | Element erfassen | Erweiterungssymbol klicken → **Element auswählen** → Element auf der Seite klicken |
 | Per Selektor erfassen | Erweiterungssymbol klicken → CSS- oder XPath-Selektor eingeben → **Erfassen** |
+| Bereich erfassen | Erweiterungssymbol klicken → Tab **Bereich** → Bereich durch Ziehen auswählen → **Erfassen** |
 | Viewport erfassen | Erweiterungssymbol klicken → Tab **Ansicht** → **Erfassen** |
 | Gesamte Seite erfassen | Erweiterungssymbol klicken → Tab **Ganze Seite** → **Erfassen** |
 | Herunterladen | Nach der Erfassung auf **Herunterladen** klicken (PNG oder PDF) |
