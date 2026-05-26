@@ -28,6 +28,7 @@
   "status_clipboard_done":     { "message": "Copied to clipboard!" },
   "status_clipboard_fallback": { "message": "Copy failed — saved as download." },
   "status_element_captured":   { "message": "Element captured! Download or copy." },
+  "status_region_captured":    { "message": "Region captured! Download or copy." },
   "error_element_not_found":   { "message": "Element not found." },
   "error_unsupported_page":    { "message": "This page cannot be captured." }
 }

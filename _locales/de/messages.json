@@ -28,6 +28,7 @@
   "status_clipboard_done":     { "message": "In Zwischenablage kopiert!" },
   "status_clipboard_fallback": { "message": "Kopieren fehlgeschlagen — als Download gespeichert." },
   "status_element_captured":   { "message": "Element erfasst! Herunterladen oder kopieren." },
+  "status_region_captured":    { "message": "Bereich erfasst! Herunterladen oder kopieren." },
   "error_element_not_found":   { "message": "Element nicht gefunden." },
   "error_unsupported_page":    { "message": "Diese Seite kann nicht erfasst werden." }
 }

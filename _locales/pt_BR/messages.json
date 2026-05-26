@@ -28,6 +28,7 @@
   "status_clipboard_done":     { "message": "Copiado para a área de transferência!" },
   "status_clipboard_fallback": { "message": "Falha ao copiar — salvo como download." },
   "status_element_captured":   { "message": "Elemento capturado! Baixe ou copie." },
+  "status_region_captured":    { "message": "Região capturada! Baixe ou copie." },
   "error_element_not_found":   { "message": "Elemento não encontrado." },
   "error_unsupported_page":    { "message": "Esta página não pode ser capturada." }
 }

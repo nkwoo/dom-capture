@@ -197,7 +197,8 @@ btnClipboard.addEventListener('click', async () => {
       document.querySelector('[data-tab="region"]').classList.add('active');
       panels.region.classList.remove('hidden');
     }
-    showStatus(t('status_element_captured'), 'success');
+    const statusKey = result.source === 'region' ? 'status_region_captured' : 'status_element_captured';
+    showStatus(t(statusKey), 'success');
   }
   chrome.action.setBadgeText({ text: '' });
 })();

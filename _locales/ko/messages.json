@@ -28,6 +28,7 @@
   "status_clipboard_done":     { "message": "클립보드에 복사되었습니다!" },
   "status_clipboard_fallback": { "message": "클립보드 복사 실패 → 다운로드로 저장했습니다." },
   "status_element_captured":   { "message": "요소 캡처 완료! 다운로드 또는 복사하세요." },
+  "status_region_captured":    { "message": "영역 캡처 완료! 다운로드 또는 복사하세요." },
   "error_element_not_found":   { "message": "요소를 찾을 수 없습니다." },
   "error_unsupported_page":    { "message": "이 페이지는 캡처할 수 없습니다." }
 }

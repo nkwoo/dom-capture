@@ -28,6 +28,7 @@
   "status_clipboard_done":     { "message": "已复制到剪贴板！" },
   "status_clipboard_fallback": { "message": "复制失败 — 已保存为下载。" },
   "status_element_captured":   { "message": "元素已捕获！下载或复制。" },
+  "status_region_captured":    { "message": "区域已捕获！下载或复制。" },
   "error_element_not_found":   { "message": "未找到元素。" },
   "error_unsupported_page":    { "message": "此页面无法捕获。" }
 }

@@ -28,6 +28,7 @@
   "status_clipboard_done":     { "message": "Copié dans le presse-papiers !" },
   "status_clipboard_fallback": { "message": "Échec de la copie — enregistré en téléchargement." },
   "status_element_captured":   { "message": "Élément capturé ! Télécharger ou copier." },
+  "status_region_captured":    { "message": "Région capturée ! Télécharger ou copier." },
   "error_element_not_found":   { "message": "Élément introuvable." },
   "error_unsupported_page":    { "message": "Cette page ne peut pas être capturée." }
 }

@@ -28,6 +28,7 @@
   "status_clipboard_done":     { "message": "Скопировано в буфер обмена!" },
   "status_clipboard_fallback": { "message": "Ошибка копирования — сохранено как загрузка." },
   "status_element_captured":   { "message": "Элемент захвачен! Скачайте или скопируйте." },
+  "status_region_captured":    { "message": "Область захвачена! Скачайте или скопируйте." },
   "error_element_not_found":   { "message": "Элемент не найден." },
   "error_unsupported_page":    { "message": "Эта страница не может быть захвачена." }
 }

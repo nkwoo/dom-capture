@@ -28,6 +28,7 @@
   "status_clipboard_done":     { "message": "クリップボードにコピーしました！" },
   "status_clipboard_fallback": { "message": "コピー失敗 — ダウンロードとして保存しました。" },
   "status_element_captured":   { "message": "要素をキャプチャしました！ダウンロードまたはコピーしてください。" },
+  "status_region_captured":    { "message": "領域をキャプチャしました！ダウンロードまたはコピーしてください。" },
   "error_element_not_found":   { "message": "要素が見つかりません。" },
   "error_unsupported_page":    { "message": "このページはキャプチャできません。" }
 }

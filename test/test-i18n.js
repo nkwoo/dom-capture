@@ -15,7 +15,7 @@ const EXPECTED_KEYS = [
   'status_capture_first', 'status_downloading',
   'status_download_done', 'status_download_failed',
   'status_clipboard_done', 'status_clipboard_fallback',
-  'status_element_captured',
+  'status_element_captured', 'status_region_captured',
   'error_element_not_found', 'error_unsupported_page',
 ];
 
