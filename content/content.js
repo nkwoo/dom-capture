@@ -224,6 +224,7 @@ function deactivateRegion() {
   document.removeEventListener('mousemove', onRegionMouseMove, true);
   document.removeEventListener('mouseup',   onRegionMouseUp,   true);
   document.removeEventListener('keydown',   onRegionKeyDown,   true);
+  if (regionConfirm) regionConfirm.removeEventListener('click', confirmRegionCapture);
   removeRegionOverlay();
 }
 
