@@ -324,7 +324,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
         try {
           const croppedUrl = await captureRegion(sender.tab.id, msg.rect);
           await chrome.storage.session.set({
-            captureResult: { dataUrl: croppedUrl, timestamp: Date.now() }
+            captureResult: { dataUrl: croppedUrl, source: 'region', timestamp: Date.now() }
           });
           await reopenUI(sender.tab.id);
           sendResponse({ ok: true });

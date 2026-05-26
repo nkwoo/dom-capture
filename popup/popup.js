@@ -191,6 +191,11 @@ btnClipboard.addEventListener('click', async () => {
     if (result.selector) {
       selectorType.value = 'css';
       selectorInput.value = result.selector;
+    } else if (result.source === 'region') {
+      tabs.forEach(t => t.classList.remove('active'));
+      Object.values(panels).forEach(p => p.classList.add('hidden'));
+      document.querySelector('[data-tab="region"]').classList.add('active');
+      panels.region.classList.remove('hidden');
     }
     showStatus(t('status_element_captured'), 'success');
   }
