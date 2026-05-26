@@ -123,6 +123,27 @@ async function captureElement(tabId, absRect) {
   return blobToDataUrl(blob);
 }
 
+async function captureRegion(tabId, rect) {
+  const dpr = await getDevicePixelRatio(tabId);
+  const dataUrl = await captureTab();
+  const imgBlob = await (await fetch(dataUrl)).blob();
+  const img = await createImageBitmap(imgBlob);
+  const canvas = new OffscreenCanvas(
+    Math.round(rect.width  * dpr),
+    Math.round(rect.height * dpr)
+  );
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(
+    img,
+    Math.round(rect.left   * dpr), Math.round(rect.top    * dpr),
+    Math.round(rect.width  * dpr), Math.round(rect.height * dpr),
+    0, 0,
+    Math.round(rect.width  * dpr), Math.round(rect.height * dpr)
+  );
+  const outBlob = await canvas.convertToBlob({ type: 'image/png' });
+  return blobToDataUrl(outBlob);
+}
+
 function sendToTab(tabId, msg) {
   return new Promise((resolve) => {
     chrome.tabs.sendMessage(tabId, msg, resolve);
@@ -274,7 +295,7 @@ async function dataUrlToPdfDataUrl(dataUrl) {
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   (async () => {
     try {
-      const CAPTURE_ACTIONS = ['ACTIVATE_PICKER', 'CAPTURE_ELEMENT', 'CAPTURE_VIEWPORT', 'CAPTURE_FULL_PAGE'];
+      const CAPTURE_ACTIONS = ['ACTIVATE_PICKER', 'ACTIVATE_REGION', 'CAPTURE_ELEMENT', 'CAPTURE_VIEWPORT', 'CAPTURE_FULL_PAGE'];
 
       if (CAPTURE_ACTIONS.includes(msg.action)) {
         const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
@@ -299,9 +320,26 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
           await sendToTab(sender.tab.id, { action: 'UNBLOCK_HOVER' });
         }
 
+      } else if (msg.action === 'REGION_SELECTED') {
+        try {
+          const croppedUrl = await captureRegion(sender.tab.id, msg.rect);
+          await chrome.storage.session.set({
+            captureResult: { dataUrl: croppedUrl, source: 'region', timestamp: Date.now() }
+          });
+          await reopenUI(sender.tab.id);
+          sendResponse({ ok: true });
+        } catch (err) {
+          sendResponse({ error: err.message });
+        }
+
       } else if (msg.action === 'ACTIVATE_PICKER') {
         const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
         await sendToTab(tab.id, { action: 'ACTIVATE_PICKER' });
+        sendResponse({ ok: true });
+
+      } else if (msg.action === 'ACTIVATE_REGION') {
+        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        await sendToTab(tab.id, { action: 'ACTIVATE_REGION' });
         sendResponse({ ok: true });
 
       } else if (msg.action === 'DEACTIVATE_PICKER') {

@@ -18,6 +18,7 @@
 
 - **Sélecteur d'éléments** — Survolez n'importe quel élément et cliquez pour le capturer
 - **Sélecteur CSS / XPath** — Capturez un élément spécifique par sélecteur
+- **Capture de région** — Faites glisser un rectangle sur la fenêtre pour capturer la zone sélectionnée
 - **Capture de la fenêtre** — Capture d'écran de la zone visible actuelle
 - **Capture de page entière** — Capture d'écran avec défilement de la page entière
 - **Export** — Enregistrez en PNG ou PDF, ou copiez dans le presse-papiers
@@ -53,6 +54,7 @@ Dans le [Chrome Web Store](https://chromewebstore.google.com/detail/dom-capture/
 |-------|---------|
 | Capturer un élément | Cliquer sur l'icône → **Sélectionner un élément** → Cliquer sur un élément de la page |
 | Capturer par sélecteur | Cliquer sur l'icône → Saisir un sélecteur CSS ou XPath → **Capturer** |
+| Capturer une région | Cliquer sur l'icône → Onglet **Région** → Glisser pour sélectionner une zone → **Capturer** |
 | Capturer la fenêtre | Cliquer sur l'icône → Onglet **Fenêtre** → **Capturer** |
 | Capturer la page entière | Cliquer sur l'icône → Onglet **Page entière** → **Capturer** |
 | Télécharger | Après la capture, cliquer sur **Télécharger** (PNG ou PDF) |

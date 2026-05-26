@@ -3,12 +3,15 @@
   "ext_description":           { "message": "DOM 요소 또는 전체 페이지를 PNG/PDF로 캡처" },
   "tab_element":               { "message": "요소 캡처" },
   "tab_page":                  { "message": "페이지 캡처" },
+  "tab_region":                { "message": "영역 캡처" },
   "btn_picker":                { "message": "마우스로 요소 선택" },
   "divider_or":                { "message": "또는" },
   "selector_placeholder":      { "message": ".my-class 또는 //div[@id='x']" },
   "btn_find":                  { "message": "요소 찾기 & 캡처" },
   "btn_viewport":              { "message": "현재 화면 캡처" },
   "btn_fullpage":              { "message": "전체 페이지 캡처" },
+  "btn_region":                { "message": "드래그로 영역 선택" },
+  "btn_region_confirm":        { "message": "캡처" },
   "btn_download":              { "message": "다운로드" },
   "btn_clipboard":             { "message": "클립보드 복사" },
   "preview_alt":               { "message": "캡처 미리보기" },
@@ -25,6 +28,7 @@
   "status_clipboard_done":     { "message": "클립보드에 복사되었습니다!" },
   "status_clipboard_fallback": { "message": "클립보드 복사 실패 → 다운로드로 저장했습니다." },
   "status_element_captured":   { "message": "요소 캡처 완료! 다운로드 또는 복사하세요." },
+  "status_region_captured":    { "message": "영역 캡처 완료! 다운로드 또는 복사하세요." },
   "error_element_not_found":   { "message": "요소를 찾을 수 없습니다." },
   "error_unsupported_page":    { "message": "이 페이지는 캡처할 수 없습니다." }
 }

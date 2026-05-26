@@ -11,6 +11,7 @@
 
     <div class="tabs" role="tablist">
       <button class="tab active" data-tab="element" role="tab" data-i18n="tab_element">Element</button>
+      <button class="tab" data-tab="region" role="tab" data-i18n="tab_region">Region</button>
       <button class="tab" data-tab="page" role="tab" data-i18n="tab_page">Page</button>
     </div>
 
@@ -28,6 +29,11 @@
                placeholder=".my-class or //div[@id='x']">
       </div>
       <button class="btn btn-secondary" id="btn-find" data-i18n="btn_find">Find &amp; Capture Element</button>
+    </div>
+
+    <!-- Region capture panel -->
+    <div class="panel hidden" id="panel-region">
+      <button class="btn btn-primary" id="btn-region" data-i18n="btn_region">Drag to Select Region</button>
     </div>
 
     <!-- Page capture panel -->

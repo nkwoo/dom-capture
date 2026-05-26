@@ -22,3 +22,56 @@
   pointer-events: none;
   white-space: nowrap;
 }
+
+/* Region capture overlay */
+#dom-capture-region-mask {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483646;
+  cursor: crosshair;
+}
+
+#dom-capture-region-sel {
+  position: fixed;
+  z-index: 2147483647;
+  border: 1px solid #2563eb;
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5);
+  cursor: move;
+  box-sizing: border-box;
+}
+
+.dom-capture-region-handle {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: #2563eb;
+  border-radius: 1px;
+}
+
+.dom-capture-region-handle[data-dir="nw"] { top: -4px; left: -4px; cursor: nw-resize; }
+.dom-capture-region-handle[data-dir="n"]  { top: -4px; left: calc(50% - 4px); cursor: n-resize; }
+.dom-capture-region-handle[data-dir="ne"] { top: -4px; right: -4px; cursor: ne-resize; }
+.dom-capture-region-handle[data-dir="e"]  { top: calc(50% - 4px); right: -4px; cursor: e-resize; }
+.dom-capture-region-handle[data-dir="se"] { bottom: -4px; right: -4px; cursor: se-resize; }
+.dom-capture-region-handle[data-dir="s"]  { bottom: -4px; left: calc(50% - 4px); cursor: s-resize; }
+.dom-capture-region-handle[data-dir="sw"] { bottom: -4px; left: -4px; cursor: sw-resize; }
+.dom-capture-region-handle[data-dir="w"]  { top: calc(50% - 4px); left: -4px; cursor: w-resize; }
+
+#dom-capture-region-confirm {
+  position: fixed;
+  z-index: 2147483647;
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 4px 14px;
+  font-size: 13px;
+  font-weight: bold;
+  cursor: pointer;
+  font-family: sans-serif;
+  transform: translateX(-50%);
+}
+
+#dom-capture-region-confirm:hover {
+  background: #1d4ed8;
+}

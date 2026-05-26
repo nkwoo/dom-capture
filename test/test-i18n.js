@@ -5,9 +5,9 @@ const assert = require('assert');
 
 const EXPECTED_KEYS = [
   'ext_name', 'ext_description',
-  'tab_element', 'tab_page',
+  'tab_element', 'tab_page', 'tab_region',
   'btn_picker', 'divider_or', 'selector_placeholder',
-  'btn_find', 'btn_viewport', 'btn_fullpage',
+  'btn_find', 'btn_viewport', 'btn_fullpage', 'btn_region', 'btn_region_confirm',
   'btn_download', 'btn_clipboard', 'preview_alt',
   'status_enter_selector', 'status_finding',
   'status_capture_done', 'status_capture_failed',
@@ -15,7 +15,7 @@ const EXPECTED_KEYS = [
   'status_capture_first', 'status_downloading',
   'status_download_done', 'status_download_failed',
   'status_clipboard_done', 'status_clipboard_fallback',
-  'status_element_captured',
+  'status_element_captured', 'status_region_captured',
   'error_element_not_found', 'error_unsupported_page',
 ];
 

@@ -3,12 +3,15 @@
   "ext_description":           { "message": "Captura elementos DOM o páginas completas como PNG o PDF" },
   "tab_element":               { "message": "Elemento" },
   "tab_page":                  { "message": "Página" },
+  "tab_region":                { "message": "Región" },
   "btn_picker":                { "message": "Seleccionar elemento con el ratón" },
   "divider_or":                { "message": "o" },
   "selector_placeholder":      { "message": ".my-class o //div[@id='x']" },
   "btn_find":                  { "message": "Buscar y capturar elemento" },
   "btn_viewport":              { "message": "Capturar ventana" },
   "btn_fullpage":              { "message": "Capturar página completa" },
+  "btn_region":                { "message": "Arrastrar para seleccionar región" },
+  "btn_region_confirm":        { "message": "Capturar" },
   "btn_download":              { "message": "Descargar" },
   "btn_clipboard":             { "message": "Copiar al portapapeles" },
   "preview_alt":               { "message": "Vista previa de captura" },
@@ -25,6 +28,7 @@
   "status_clipboard_done":     { "message": "¡Copiado al portapapeles!" },
   "status_clipboard_fallback": { "message": "Error al copiar — guardado como descarga." },
   "status_element_captured":   { "message": "¡Elemento capturado! Descarga o copia." },
+  "status_region_captured":    { "message": "¡Región capturada! Descarga o copia." },
   "error_element_not_found":   { "message": "Elemento no encontrado." },
   "error_unsupported_page":    { "message": "Esta página no se puede capturar." }
 }

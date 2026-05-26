@@ -6,6 +6,16 @@ let label = null;
 let currentTarget = null;
 let hoverBlocked = false;
 
+// Region capture state
+let regionActive = false;
+let regionState = 'idle'; // 'idle' | 'drawing' | 'adjusting'
+let regionRect = { x: 0, y: 0, w: 0, h: 0 };
+let regionDragStart = null;
+let regionDragHandle = null;
+let regionMask = null;
+let regionSel = null;
+let regionConfirm = null;
+
 function createOverlay() {
   if (overlay) removeOverlay();
   overlay = document.createElement('div');
@@ -20,6 +30,202 @@ function createOverlay() {
 function removeOverlay() {
   if (overlay) { overlay.remove(); overlay = null; }
   if (label) { label.remove(); label = null; }
+}
+
+function createRegionOverlay() {
+  if (regionMask) removeRegionOverlay();
+
+  regionMask = document.createElement('div');
+  regionMask.id = 'dom-capture-region-mask';
+  document.body.appendChild(regionMask);
+
+  regionSel = document.createElement('div');
+  regionSel.id = 'dom-capture-region-sel';
+  regionSel.style.display = 'none';
+  for (const dir of ['nw', 'n', 'ne', 'e', 'se', 's', 'sw', 'w']) {
+    const h = document.createElement('div');
+    h.className = 'dom-capture-region-handle';
+    h.dataset.dir = dir;
+    regionSel.appendChild(h);
+  }
+  document.body.appendChild(regionSel);
+
+  regionConfirm = document.createElement('button');
+  regionConfirm.id = 'dom-capture-region-confirm';
+  regionConfirm.textContent = chrome.i18n.getMessage('btn_region_confirm') || 'Capture';
+  regionConfirm.style.display = 'none';
+  document.body.appendChild(regionConfirm);
+}
+
+function removeRegionOverlay() {
+  if (regionMask)    { regionMask.remove();    regionMask = null;    }
+  if (regionSel)     { regionSel.remove();     regionSel = null;     }
+  if (regionConfirm) { regionConfirm.remove(); regionConfirm = null; }
+}
+
+function applyRegionRect() {
+  if (!regionSel) return;
+  const { x, y, w, h } = regionRect;
+  regionSel.style.left   = `${x}px`;
+  regionSel.style.top    = `${y}px`;
+  regionSel.style.width  = `${w}px`;
+  regionSel.style.height = `${h}px`;
+  regionSel.style.display = 'block';
+
+  if (regionConfirm && regionConfirm.style.display !== 'none') {
+    const gap  = 6;
+    const btnH = 28;
+    const spaceBelow = window.innerHeight - (y + h);
+    regionConfirm.style.top  = spaceBelow >= btnH + gap
+      ? `${y + h + gap}px`
+      : `${y - btnH - gap}px`;
+    regionConfirm.style.left = `${x + w / 2}px`;
+  }
+}
+
+function regionClamp(val, min, max) {
+  return Math.max(min, Math.min(max, val));
+}
+
+function onRegionMouseDown(e) {
+  if (!regionActive) return;
+  if (e.target === regionConfirm) return;
+  e.preventDefault();
+  e.stopPropagation();
+
+  if (regionState === 'adjusting') {
+    if (e.target.classList.contains('dom-capture-region-handle')) {
+      regionDragHandle = e.target.dataset.dir;
+      regionDragStart  = { x: e.clientX, y: e.clientY, rect: { ...regionRect } };
+      return;
+    }
+    if (e.target === regionSel || regionSel.contains(e.target)) {
+      regionDragHandle = 'move';
+      regionDragStart  = { x: e.clientX, y: e.clientY, rect: { ...regionRect } };
+      return;
+    }
+  }
+
+  // Start (or restart) drawing
+  regionState      = 'drawing';
+  regionDragHandle = null;
+  regionDragStart  = { x: e.clientX, y: e.clientY };
+  regionRect       = { x: e.clientX, y: e.clientY, w: 0, h: 0 };
+  if (regionSel)     regionSel.style.display     = 'none';
+  if (regionConfirm) regionConfirm.style.display = 'none';
+}
+
+function onRegionMouseMove(e) {
+  if (!regionActive || !regionDragStart) return;
+
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+
+  if (regionState === 'drawing') {
+    const x2 = regionClamp(e.clientX, 0, vw);
+    const y2 = regionClamp(e.clientY, 0, vh);
+    regionRect = {
+      x: Math.min(regionDragStart.x, x2),
+      y: Math.min(regionDragStart.y, y2),
+      w: Math.abs(x2 - regionDragStart.x),
+      h: Math.abs(y2 - regionDragStart.y),
+    };
+    applyRegionRect();
+    return;
+  }
+
+  if (regionState === 'adjusting') {
+    const dx   = e.clientX - regionDragStart.x;
+    const dy   = e.clientY - regionDragStart.y;
+    const orig = regionDragStart.rect;
+    let { x, y, w, h } = orig;
+
+    if (regionDragHandle === 'move') {
+      x = regionClamp(orig.x + dx, 0, vw - orig.w);
+      y = regionClamp(orig.y + dy, 0, vh - orig.h);
+    } else {
+      const dir = regionDragHandle;
+      if (dir.includes('e')) { w = regionClamp(orig.w + dx, 4, vw - orig.x); }
+      if (dir.includes('s')) { h = regionClamp(orig.h + dy, 4, vh - orig.y); }
+      if (dir.includes('w')) {
+        const nx = regionClamp(orig.x + dx, 0, orig.x + orig.w - 4);
+        w = orig.x + orig.w - nx;
+        x = nx;
+      }
+      if (dir.includes('n')) {
+        const ny = regionClamp(orig.y + dy, 0, orig.y + orig.h - 4);
+        h = orig.y + orig.h - ny;
+        y = ny;
+      }
+    }
+    regionRect = { x, y, w, h };
+    applyRegionRect();
+  }
+}
+
+function onRegionMouseUp() {
+  if (!regionActive) return;
+  if (regionState === 'drawing' && regionRect.w >= 4 && regionRect.h >= 4) {
+    regionState = 'adjusting';
+    if (regionConfirm) {
+      regionConfirm.style.display = 'block';
+      applyRegionRect();
+    }
+  }
+  regionDragStart  = null;
+  regionDragHandle = null;
+}
+
+function onRegionKeyDown(e) {
+  if (!regionActive) return;
+  if (e.key === 'Escape') {
+    e.stopPropagation();
+    deactivateRegion();
+  } else if (e.key === 'Enter' && regionState === 'adjusting') {
+    e.stopPropagation();
+    confirmRegionCapture();
+  }
+}
+
+function confirmRegionCapture() {
+  const rect = {
+    left:   regionRect.x,
+    top:    regionRect.y,
+    width:  regionRect.w,
+    height: regionRect.h,
+  };
+  deactivateRegion();
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    chrome.runtime.sendMessage({ action: 'REGION_SELECTED', rect });
+  }));
+}
+
+function activateRegion() {
+  if (regionActive) deactivateRegion();
+  regionActive     = true;
+  regionState      = 'idle';
+  regionRect       = { x: 0, y: 0, w: 0, h: 0 };
+  regionDragStart  = null;
+  regionDragHandle = null;
+  createRegionOverlay();
+  document.addEventListener('mousedown', onRegionMouseDown, true);
+  document.addEventListener('mousemove', onRegionMouseMove, true);
+  document.addEventListener('mouseup',   onRegionMouseUp,   true);
+  document.addEventListener('keydown',   onRegionKeyDown,   true);
+  regionConfirm.addEventListener('click', confirmRegionCapture);
+}
+
+function deactivateRegion() {
+  regionActive     = false;
+  regionState      = 'idle';
+  regionDragStart  = null;
+  regionDragHandle = null;
+  document.removeEventListener('mousedown', onRegionMouseDown, true);
+  document.removeEventListener('mousemove', onRegionMouseMove, true);
+  document.removeEventListener('mouseup',   onRegionMouseUp,   true);
+  document.removeEventListener('keydown',   onRegionKeyDown,   true);
+  if (regionConfirm) regionConfirm.removeEventListener('click', confirmRegionCapture);
+  removeRegionOverlay();
 }
 
 function getElementLabel(el) {
@@ -282,6 +488,14 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
 
   } else if (msg.action === 'RESTORE_SCROLLBAR') {
     restoreScrollbar();
+    sendResponse({ ok: true });
+
+  } else if (msg.action === 'ACTIVATE_REGION') {
+    activateRegion();
+    sendResponse({ ok: true });
+
+  } else if (msg.action === 'DEACTIVATE_REGION') {
+    deactivateRegion();
     sendResponse({ ok: true });
 
   } else {

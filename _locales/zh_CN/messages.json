@@ -3,12 +3,15 @@
   "ext_description":           { "message": "将DOM元素或整个页面捕获为PNG或PDF" },
   "tab_element":               { "message": "元素" },
   "tab_page":                  { "message": "页面" },
+  "tab_region":                { "message": "区域" },
   "btn_picker":                { "message": "用鼠标选择元素" },
   "divider_or":                { "message": "或" },
   "selector_placeholder":      { "message": ".my-class 或 //div[@id='x']" },
   "btn_find":                  { "message": "查找并捕获元素" },
   "btn_viewport":              { "message": "捕获视口" },
   "btn_fullpage":              { "message": "捕获整页" },
+  "btn_region":                { "message": "拖动以选择区域" },
+  "btn_region_confirm":        { "message": "截图" },
   "btn_download":              { "message": "下载" },
   "btn_clipboard":             { "message": "复制到剪贴板" },
   "preview_alt":               { "message": "捕获预览" },
@@ -25,6 +28,7 @@
   "status_clipboard_done":     { "message": "已复制到剪贴板！" },
   "status_clipboard_fallback": { "message": "复制失败 — 已保存为下载。" },
   "status_element_captured":   { "message": "元素已捕获！下载或复制。" },
+  "status_region_captured":    { "message": "区域已捕获！下载或复制。" },
   "error_element_not_found":   { "message": "未找到元素。" },
   "error_unsupported_page":    { "message": "此页面无法捕获。" }
 }

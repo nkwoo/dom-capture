@@ -3,12 +3,15 @@
   "ext_description":           { "message": "Захват элементов DOM или целых страниц в PNG или PDF" },
   "tab_element":               { "message": "Элемент" },
   "tab_page":                  { "message": "Страница" },
+  "tab_region":                { "message": "Область" },
   "btn_picker":                { "message": "Выбрать элемент мышью" },
   "divider_or":                { "message": "или" },
   "selector_placeholder":      { "message": ".my-class или //div[@id='x']" },
   "btn_find":                  { "message": "Найти и захватить элемент" },
   "btn_viewport":              { "message": "Захватить окно" },
   "btn_fullpage":              { "message": "Захватить всю страницу" },
+  "btn_region":                { "message": "Выбрать область перетаскиванием" },
+  "btn_region_confirm":        { "message": "Снять" },
   "btn_download":              { "message": "Скачать" },
   "btn_clipboard":             { "message": "Копировать в буфер обмена" },
   "preview_alt":               { "message": "Предварительный просмотр" },
@@ -25,6 +28,7 @@
   "status_clipboard_done":     { "message": "Скопировано в буфер обмена!" },
   "status_clipboard_fallback": { "message": "Ошибка копирования — сохранено как загрузка." },
   "status_element_captured":   { "message": "Элемент захвачен! Скачайте или скопируйте." },
+  "status_region_captured":    { "message": "Область захвачена! Скачайте или скопируйте." },
   "error_element_not_found":   { "message": "Элемент не найден." },
   "error_unsupported_page":    { "message": "Эта страница не может быть захвачена." }
 }
