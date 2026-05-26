@@ -5,9 +5,9 @@ const assert = require('assert');
 
 const EXPECTED_KEYS = [
   'ext_name', 'ext_description',
-  'tab_element', 'tab_page',
+  'tab_element', 'tab_page', 'tab_region',
   'btn_picker', 'divider_or', 'selector_placeholder',
-  'btn_find', 'btn_viewport', 'btn_fullpage',
+  'btn_find', 'btn_viewport', 'btn_fullpage', 'btn_region', 'btn_region_confirm',
   'btn_download', 'btn_clipboard', 'preview_alt',
   'status_enter_selector', 'status_finding',
   'status_capture_done', 'status_capture_failed',
