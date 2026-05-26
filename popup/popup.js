@@ -25,7 +25,8 @@ applyI18n();
 const tabs = document.querySelectorAll('.tab');
 const panels = {
   element: document.getElementById('panel-element'),
-  page: document.getElementById('panel-page'),
+  region:  document.getElementById('panel-region'),
+  page:    document.getElementById('panel-page'),
 };
 const btnPicker = document.getElementById('btn-picker');
 const selectorType = document.getElementById('selector-type');
@@ -33,6 +34,7 @@ const selectorInput = document.getElementById('selector-input');
 const btnFind = document.getElementById('btn-find');
 const btnViewport = document.getElementById('btn-viewport');
 const btnFullpage = document.getElementById('btn-fullpage');
+const btnRegion = document.getElementById('btn-region');
 const btnDownload = document.getElementById('btn-download');
 const btnClipboard = document.getElementById('btn-clipboard');
 const previewImg = document.getElementById('preview-img');
@@ -80,6 +82,15 @@ document.querySelectorAll('input[name="format"]').forEach(r => {
 
 btnPicker.addEventListener('click', async () => {
   const result = await send({ action: 'ACTIVATE_PICKER' });
+  if (result && result.error) {
+    showStatus(result.error, 'error');
+    return;
+  }
+  window.close();
+});
+
+btnRegion.addEventListener('click', async () => {
+  const result = await send({ action: 'ACTIVATE_REGION' });
   if (result && result.error) {
     showStatus(result.error, 'error');
     return;
